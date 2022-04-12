@@ -1,4 +1,4 @@
-mdlr('[html]examples-input', m => {
+mdlr('[html]input', m => {
 
   m.html`<input value={content} on={input}><div>hello, {content}</div>`;
 

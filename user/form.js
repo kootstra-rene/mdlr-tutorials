@@ -1,4 +1,4 @@
-mdlr('[html]examples-form', m => {
+mdlr('[html]form', m => {
   m.html`
     <form action="/api/form" method="post">
       <label for="name">name:</label><input type="text" id="name" name="user_name"><br>
@@ -20,7 +20,7 @@ mdlr('[html]examples-form', m => {
   `;
 })
 
-mdlr('examples-form:router', m => {
+mdlr('form:router', m => {
   const { ok } = m.require('[mdlr]server-response');
   const router = m.require('[mdlr]router');
   const reader = m.require('stream-reader');
@@ -34,14 +34,14 @@ mdlr('examples-form:router', m => {
   return router;
 })
 
-mdlr('examples-form', m => {
+mdlr('form', m => {
   m.require('[mdlr]html-loader');
-  m.require('[html]examples-form');
+  m.require('[html]form');
 
   const { setRoute } = m.require('repl:backend-api');
   const { body } = m.require('html:body');
 
-  setRoute('examples-form:router', error => {
+  setRoute('form:router', error => {
     body('examples-form');
   });
 })

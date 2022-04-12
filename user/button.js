@@ -1,4 +1,4 @@
-mdlr('[html]examples-button', m => {
+mdlr('[html]button', m => {
 
   m.html`<button on={click}>clicked {count} times</button>`;
 
@@ -11,7 +11,7 @@ mdlr('[html]examples-button', m => {
   }
 })
 
-mdlr('[html]examples-button-styled', m => {
+mdlr('[html]button-styled', m => {
 
   m.html`<button on={click}>clicked {count} times</button>`;
 

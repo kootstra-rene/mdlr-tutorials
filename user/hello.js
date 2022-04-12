@@ -1,10 +1,10 @@
-mdlr('[html]examples-hello', m => {
+mdlr('[html]hello', m => {
 
   m.html`<div>hello, world</div>`;
 
 })
 
-mdlr('[html]examples-hello-named', m => {
+mdlr('[html]hello-named', m => {
 
   m.html`<div>hello, {name}</div>`;
 
@@ -14,7 +14,7 @@ mdlr('[html]examples-hello-named', m => {
 
 })
 
-mdlr('[html]examples-hello-styled', m => {
+mdlr('[html]hello-styled', m => {
 
   m.css`
     :root {
