@@ -42,6 +42,6 @@ mdlr('form', m => {
   const { body } = m.require('html:body');
 
   setRoute('form:router', error => {
-    body('examples-form');
+    body('form');
   });
 })
