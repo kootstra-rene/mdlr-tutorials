@@ -3,8 +3,8 @@ mdlr('[html]todo-overview', m => {
   const { html, css } = m;
 
   html`
-    {#each todoList as todo}
-      <span>{todo.description}</span><br>
+    {#each todo in todoList}
+      <span>- {todo.description}</span><br>
     {:else}
       <span>You have nothing todo.</span>
     {/each}`;
@@ -22,7 +22,7 @@ mdlr('[html]todo-overview', m => {
 
     addItem(record) {
       this.todoList.push(record);
-      this.$update({});
+      m.redraw(this);
     }
   }
 
