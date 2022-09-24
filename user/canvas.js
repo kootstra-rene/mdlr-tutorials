@@ -1,8 +1,14 @@
-mdlr('canvas-gradient', m => {
+mdlr('[html]canvas-gradient', m => {
 
-  m.require('[mdlr]html-loader');
+  m.html`<canvas{} height={} width={}></canvas>`;
 
-  function run({context, height, width}) {
+  m.css`canvas {
+    height:100vh;
+    width: 100vw;
+  }`;
+
+  function animate(context) {
+    const { height, width } = context.canvas;
     const image = context.getImageData(0, 0, width, height);
 
     (function loop(now) {
@@ -30,15 +36,14 @@ mdlr('canvas-gradient', m => {
     }(0));
   }
 
-  m.require('[html]canvas', {
-    options: {
-      height: 8,
-      width: 8,
-      run
-    }
-  });
+  return class {
+    canvas = null;
+    height = 8;
+    width = 8;
 
-  // app
-  document.body.innerHTML = `<m-canvas></m-canvas>`;
+    connected() {
+      animate(this.canvas.getContext('2d'));
+    }
+  }
 
 })

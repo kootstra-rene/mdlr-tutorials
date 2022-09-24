@@ -17,7 +17,6 @@ mdlr('[html]svg-clock', m => {
       <line class="second" y1="10" y2="-38" transform="rotate({6 * seconds})" />
     </svg>`;
 
-
   m.css`:root {
       position: absolute;
       left: 0;
