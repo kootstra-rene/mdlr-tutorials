@@ -22,6 +22,10 @@ mdlr('[html]calculator', m => {
       /* box-shadow: 0px 0px 100px #cccccc;  */
       margin: 20px auto;
       width: 500px;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
     }
     
     div.output {
@@ -99,7 +103,7 @@ mdlr('[html]calculator', m => {
 
     #evaluteInput() {
       try { 
-        return eval(this.input || '0');
+        return `${eval(this.input || '0')}`;
       }
       catch (e) {
         return this.result;
