@@ -33,7 +33,7 @@ mdlr('[html]todo-input', m => {
   const { EventEmitter } = m.require('event-emitter');
   const { html, css } = m;
 
-  html`<input{}><button on={click}>create</button>`;
+  html`<input{}> <button on={click}>create</button>`;
 
   css`
     :root {
@@ -95,14 +95,13 @@ mdlr('[html]todo', m => {
     }`;
 
   return class {
-    constructor() {
-      setTimeout(() => {
-        this.input.subscribe('create', record => {
-          log(`added '${record.description}' to list`);
-          this.todoList.addItem(record);
-        })
+    connected() {
+      this.input.subscribe('create', record => {
+        log(`added '${record.description}' to list`);
+        this.todoList.addItem(record);
       })
     }
+
   }
 
 })

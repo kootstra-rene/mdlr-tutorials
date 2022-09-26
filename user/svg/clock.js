@@ -78,7 +78,7 @@ mdlr('[html]svg-clock', m => {
     }
 
     connected() {
-      setInterval(this.#updateTime.bind(this), 250);
+      setInterval(this.#updateTime.bind(this), 500);
       this.#updateTime();
     }
   }
