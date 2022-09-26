@@ -5,6 +5,7 @@ mdlr('[html]canvas-gradient', m => {
   m.css`canvas {
     height:100vh;
     width: 100vw;
+    -webkit-mask: url(/user/resources/mdlr.svg) 50% 50% no-repeat;
   }`;
 
   function animate(context) {
