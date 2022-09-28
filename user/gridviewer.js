@@ -2,28 +2,54 @@ mdlr('[html]grid-viewer', m => {
 
   const hugeDataSet = [];
 
-  for (let row = 0 ; row < 100; row++){
+  for (let row = 0; row < 10000; row++) {
     const dataRow = [];
-    for (let col = 0; col < 100; col++){
+    for (let col = 0; col < 100; col++) {
       dataRow.push(`${row}, ${col}`);
     }
     hugeDataSet.push(dataRow);
   }
 
   m.html`
-  <table>
-    {#each row, r in rows}
-    <tr>
-      {#each col, c in cols}
-        <td>{getCell(r,c)} - {row}, {col}</td>
+    <table>
+      {#each row, r in rows}
+      <tr>
+        {#each col, c in cols}
+          <td>{getCell(r,c)}</td>
+        {/each}
+      </tr>
       {/each}
-    </tr>
-    {/each}
-  </table>`;
+    </table>
+    <div on={mousemove:scrolly}></div><div on={mousemove:scrollx}></div><div></div>`;
 
   m.css`
+    :root {
+      display: inline-grid;
+      grid-template-columns: auto 1vw;
+      grid-template-rows: auto 1vh;
+      grid-template-areas: 
+        "body scrolly"
+        "scrollx scroll"
+    }
+
     table {
+      grid-area: body;
       background-color: #888;
+    }
+
+    div:nth-child(2) {
+      background-color: #111;
+      grid-area: scrolly;
+    }
+    div:nth-child(3) {
+      height: 0.75em;
+      background-color: #111;
+      grid-area: scrollx;
+    }
+    div:nth-child(4) {
+      height: 0.75em;
+      background-color: #444;
+      grid-area: scroll;
     }
 
     td {
@@ -34,8 +60,8 @@ mdlr('[html]grid-viewer', m => {
     }`;
 
   return class {
-    cols = Array.from({length: 10}).fill('x');
-    rows = Array.from({length: 20}).fill('y');
+    cols = Array.from({ length: 10 }).fill('x');
+    rows = Array.from({ length: 20 }).fill('y');
     data = hugeDataSet;
     rowOffset = 10;
     colOffset = 10;
@@ -43,6 +69,16 @@ mdlr('[html]grid-viewer', m => {
     getCell(row, col) {
       return this.data[this.rowOffset + row][this.colOffset + col];
     }
-  }  
+
+    scrollx(e) {
+      const index = Math.round(e.x / (e.target.clientWidth-1) * (100 - this.cols.length));
+      this.colOffset = index;
+    }
+
+    scrolly(e) {
+      const index = Math.round(e.y / (e.target.clientHeight-1) * (10000 - this.rows.length));
+      this.rowOffset = index;
+    }
+  }
 
 })
