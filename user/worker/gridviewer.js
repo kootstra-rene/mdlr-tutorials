@@ -12,29 +12,37 @@ mdlr('[html]grid-viewer', m => {
 
   m.html`
   <table>
-    {#each row in [0,1,2]}
+    {#each row, r in rows}
     <tr>
-      {#each col in [0,1,2]}
-      <td>{data[rowOffset+row][colOffset+col]}</td>
+      {#each col, c in cols}
+        <td>{getCell(r,c)} - {row}, {col}</td>
       {/each}
     </tr>
     {/each}
-  </table>
-  `
+  </table>`;
 
   m.css`
+    table {
+      background-color: #888;
+    }
+
     td {
       border: 1px solid black;
       width: 5em;
       height: 1.5em;
       text-align: center;
-    }
-  `
+    }`;
 
   return class {
+    cols = Array.from({length: 10}).fill('x');
+    rows = Array.from({length: 20}).fill('y');
     data = hugeDataSet;
     rowOffset = 10;
     colOffset = 10;
+
+    getCell(row, col) {
+      return this.data[this.rowOffset + row][this.colOffset + col];
+    }
   }  
 
 })

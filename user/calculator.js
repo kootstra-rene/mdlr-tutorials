@@ -3,7 +3,7 @@ mdlr('[html]calculator', m => {
 
   m.html`
     <div class="output">
-      <span>{input || 0}</span><br>
+      <span>{input || 0}</span>
       <span>{result}</span>
     </div>
     <div class="keypad">
@@ -38,6 +38,10 @@ mdlr('[html]calculator', m => {
       border: 1px solid black;
       flex-direction: column;
       padding: 0.1em;
+    }
+
+    span {
+      display: block;
     }
 
     div.output > span:last-child {
@@ -98,6 +102,7 @@ mdlr('[html]calculator', m => {
         default:
           this.input += key;
           this.result = this.#evaluteInput();
+          break;
       }
     }
 

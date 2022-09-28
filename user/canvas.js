@@ -1,12 +1,14 @@
 mdlr('[html]canvas-gradient', m => {
 
-  m.html`<canvas{} height={} width={}></canvas>`;
+  m.html`
+    <canvas{} height={} width={} />`;
 
-  m.css`canvas {
-    height:100vh;
-    width: 100vw;
-    -webkit-mask: url(/user/resources/mdlr.svg) 50% 50% no-repeat;
-  }`;
+  m.css`
+    canvas {
+      height:100vh;
+      width: 100vw;
+      -webkit-mask: url(/user/resources/mdlr.svg) 50% 50% no-repeat;
+    }`;
 
   function animate(context) {
     const { height, width } = context.canvas;

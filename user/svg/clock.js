@@ -5,11 +5,11 @@ mdlr('[html]svg-clock', m => {
       <circle class="dialplate" r="48" />
       <text x="0" y="18" dominant-baseline="middle" text-anchor="middle">mdlr</text>
 
-      {#each minute in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]}
-        <line class="major" y1="35" y2="45" transform="rotate({6 * minute})" stroke-linecap="round" />
+      {#each m in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]}
+        <line class="major" y1="35" y2="45" transform="rotate({6 * m})" stroke-linecap="round" />
 
-        {#each offset in [1, 2, 3, 4]}
-          <line class="minor" y1="42" y2="45" transform="rotate({6 * (minute + offset)})" stroke-linecap="round" />
+        {#each o in [1, 2, 3, 4]}
+          <line class="minor" y1="42" y2="45" transform="rotate({6 * (m + o)})" stroke-linecap="round" />
         {/each}
       {/each}
 
