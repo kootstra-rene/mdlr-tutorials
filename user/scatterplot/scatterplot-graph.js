@@ -6,8 +6,8 @@ mdlr('[html]scatterplot-graph', m => {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">
         <g class="axis y-axis">
           {#each tick in yTicks}
-            <g class="tick tick-{tick}" transform="translate(0, {scaleY(tick)})">
-              <line x1="{padding.left}" x2="{scaleX(22)}"/>
+            <g class="tick" transform="translate(0, {yScale(tick)})">
+              <line x1="{padding.left}" x2="{xScale(22)}"/>
               <text x="{padding.left - 8}" y="+4">{tick}</text>
             </g>
           {/each}
@@ -15,15 +15,15 @@ mdlr('[html]scatterplot-graph', m => {
   
         <g class="axis x-axis">
           {#each tick in xTicks}
-            <g class="tick" transform="translate({scaleX(tick)},0)">
-              <line y1="{scaleY(0)}" y2="{scaleY(13)}"/>
+            <g class="tick" transform="translate({xScale(tick)},0)">
+              <line y1="{yScale(0)}" y2="{yScale(13)}"/>
               <text y="{height - padding.bottom + 16}">{tick}</text>
             </g>
           {/each}
         </g>
   
         {#each point in points}
-          <circle cx={scaleX(point.x)} cy={scaleY(point.y)} r="5"/>
+          <circle cx={xScale(point.x)} cy={yScale(point.y)} r="5"/>
         {/each}
       </svg>`;
   
@@ -73,14 +73,6 @@ mdlr('[html]scatterplot-graph', m => {
       padding = { top: 20, right: 40, bottom: 40, left: 25 };
       xScale = linear().domain(0, 20).range(this.padding.left, this.width - this.padding.right);
       yScale = linear().domain(0, 12).range(this.height - this.padding.bottom, this.padding.top);
-  
-      scaleX(x) {
-        return (this.xScale(x)).toFixed(1);
-      }
-  
-      scaleY(y) {
-        return (this.yScale(y)).toFixed(1);
-      }
     };
   
   })
