@@ -4,26 +4,26 @@ mdlr('[html]scatterplot-graph', m => {
   
     m.html`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">
-      <g class="axis y-axis">
+        <g class="axis y-axis">
           {#each tick in yTicks}
-              <g class="tick tick-{tick}" transform="translate(0, {scaleY(tick)})">
-                  <line x1="{padding.left}" x2="{scaleX(22)}"/>
-                  <text x="{padding.left - 8}" y="+4">{tick}</text>
-              </g>
+            <g class="tick tick-{tick}" transform="translate(0, {scaleY(tick)})">
+              <line x1="{padding.left}" x2="{scaleX(22)}"/>
+              <text x="{padding.left - 8}" y="+4">{tick}</text>
+            </g>
           {/each}
         </g>
   
-      <g class="axis x-axis">
+        <g class="axis x-axis">
           {#each tick in xTicks}
-              <g class="tick" transform="translate({scaleX(tick)},0)">
-                  <line y1="{scaleY(0)}" y2="{scaleY(13)}"/>
-                  <text y="{height - padding.bottom + 16}">{tick}</text>
-              </g>
+            <g class="tick" transform="translate({scaleX(tick)},0)">
+              <line y1="{scaleY(0)}" y2="{scaleY(13)}"/>
+              <text y="{height - padding.bottom + 16}">{tick}</text>
+            </g>
           {/each}
         </g>
   
-      {#each point in points}
-            <circle cx={scaleX(point.x)} cy={scaleY(point.y)} r="5"/>
+        {#each point in points}
+          <circle cx={scaleX(point.x)} cy={scaleY(point.y)} r="5"/>
         {/each}
       </svg>`;
   
