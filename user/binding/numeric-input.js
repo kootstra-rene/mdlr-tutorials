@@ -22,8 +22,7 @@ mdlr('[html]numeric-input', m => {
     }
 
     p {
-      margin: 0;
-      margin-top: 0.5em;
+      margin: 0.5em 0 0 0;
     }
     `;
 
