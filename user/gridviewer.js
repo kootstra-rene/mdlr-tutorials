@@ -1,15 +1,5 @@
 mdlr('[html]grid-viewer', m => {
 
-  const hugeDataSet = [];
-
-  for (let row = 0; row < 10000; row++) {
-    const dataRow = [];
-    for (let col = 0; col < 100; col++) {
-      dataRow.push(`${row}, ${col}`);
-    }
-    hugeDataSet.push(dataRow);
-  }
-
   m.html`
     <table>
       {#each row, r in rows}
@@ -62,12 +52,11 @@ mdlr('[html]grid-viewer', m => {
   return class {
     cols = Array.from({ length: 10 }).fill('x');
     rows = Array.from({ length: 20 }).fill('y');
-    data = hugeDataSet;
     rowOffset = 10;
     colOffset = 10;
 
     getCell(row, col) {
-      return this.data[this.rowOffset + row][this.colOffset + col];
+      return `${this.rowOffset + row}, ${this.colOffset + col}`;
     }
 
     scrollx(e) {
