@@ -15,7 +15,7 @@ mdlr('[html]grid-viewer', m => {
   m.css`
     :root {
       display: inline-grid;
-      grid-template-columns: auto 1vw;
+      grid-template-columns: auto 1vh;
       grid-template-rows: auto 1vh;
       grid-template-areas: 
         "body scrolly"
