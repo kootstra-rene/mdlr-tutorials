@@ -1,5 +1,5 @@
 // based-on [https://reactjsexample.com/simple-but-well-styled-calculator-made-by-using-hooks/]
-mdlr('[html]calculator', m => {
+mdlr('[html]tutorial-calculator', m => {
 
   m.html`
     <div class="output">

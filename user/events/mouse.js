@@ -1,4 +1,4 @@
-mdlr('[html]mouse-events', m => {
+mdlr('[html]tutorial-mouse-events', m => {
 
   m.html`<div on={mousemove}>mouse-position: {x}, {y}</div>`;
 

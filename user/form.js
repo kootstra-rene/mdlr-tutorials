@@ -1,4 +1,4 @@
-mdlr('[html]form', m => {
+mdlr('[html]tutorial-form', m => {
   m.html`
     <form action="/api/form" method="post">
       <label for="name">name:</label><input type="text" id="name" name="user_name"><br>
@@ -20,7 +20,7 @@ mdlr('[html]form', m => {
   `;
 })
 
-mdlr('form:router', m => {
+mdlr('tutorial-form:router', m => {
   const { ok } = m.require('[mdlr]server-response');
   const router = m.require('[mdlr]router');
   const reader = m.require('stream-reader');
@@ -34,14 +34,14 @@ mdlr('form:router', m => {
   return router;
 })
 
-mdlr('form', m => {
-  m.require('[mdlr]html-loader');
-  m.require('[html]form');
+mdlr('[html]tutorial-form-app', m => {
+  m.require('[html]tutorial-form');
 
   const { setRoute } = m.require('repl:backend-api');
-  const { body } = m.require('html:body');
 
-  setRoute('form:router', error => {
-    body('form');
+  setRoute('tutorial-form:router', error => {
+    console.log('set-route:', error);
   });
+
+  m.html`<tutorial-form />`;
 })

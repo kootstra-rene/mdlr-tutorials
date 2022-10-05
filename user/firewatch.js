@@ -1,4 +1,4 @@
-mdlr('[html]firewatch', m => {
+mdlr('[html]tutorial-firewatch', m => {
 
   m.html`
     <a class="parallax-container" href="https://www.firewatchgame.com">

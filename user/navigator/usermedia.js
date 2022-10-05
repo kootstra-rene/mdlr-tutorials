@@ -1,4 +1,4 @@
-mdlr('[html]navigator-usermedia', m => {
+mdlr('[html]tutorial-navigator-usermedia', m => {
 
   m.html`<video control playsinline></video>`;
 

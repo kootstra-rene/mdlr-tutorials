@@ -1,4 +1,4 @@
-mdlr('[html]canvas-gradient', m => {
+mdlr('[html]tutorial-canvas-gradient', m => {
 
   m.html`
     <canvas{} height={} width={} />`;

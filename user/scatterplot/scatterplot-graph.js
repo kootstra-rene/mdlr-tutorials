@@ -1,4 +1,4 @@
-mdlr('[html]scatterplot-graph', m => {
+mdlr('[html]tutorial-scatterplot-graph', m => {
 
     const { linear } = m.require('scale');
   

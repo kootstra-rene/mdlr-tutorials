@@ -1,4 +1,4 @@
-mdlr('[html]svg-clock', m => {
+mdlr('[html]tutorial-svg-clock', m => {
 
   m.html`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 100 100">

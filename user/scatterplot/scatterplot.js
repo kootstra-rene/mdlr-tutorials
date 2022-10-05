@@ -1,13 +1,13 @@
-mdlr('[html]scatterplot', m => {
+mdlr('[html]tutorial-scatterplot', m => {
 
-  const data = m.require('scatterplot:data');
-  m.require('[html]scatterplot-graph');
+  const data = m.require('tutorial-scatterplot:data');
+  m.require('[html]tutorial-scatterplot-graph');
 
   m.html`
     <div class="chart">
       <h2>Anscombe's quartet</h2>
       {#each set in dataset}
-        <m-scatterplot-graph points={set.data}></m-scatterplot-graph>
+        <tutorial-scatterplot-graph points={set.data} />
       {/each}
     </div>`;
 

@@ -1,4 +1,4 @@
-mdlr('[html]scroll', m => {
+mdlr('[html]tutorial-scroll', m => {
 
   m.html`
     <div id="container">
@@ -13,6 +13,11 @@ mdlr('[html]scroll', m => {
     :root {
       background-color: #111;
       color: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
     }
     
     #container {

@@ -1,4 +1,4 @@
-mdlr('[html]grid-viewer', m => {
+mdlr('[html]tutorial-grid-viewer', m => {
 
   m.html`
     <table>

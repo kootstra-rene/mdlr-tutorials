@@ -1,4 +1,4 @@
-mdlr('[html]if-block', m => {
+mdlr('[html]tutorial-if-block', m => {
 
     m.html`
       {#if value > 10}

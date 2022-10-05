@@ -1,4 +1,4 @@
-mdlr('[html]hacker-news', m => {
+mdlr('[html]tutorial-hacker-news', m => {
 
   m.html`
     {#each item in newsItems}

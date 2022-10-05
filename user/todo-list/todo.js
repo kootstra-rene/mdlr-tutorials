@@ -1,4 +1,4 @@
-mdlr('[html]todo-overview', m => {
+mdlr('[html]tutorial-todo-overview', m => {
 
   const { html, css } = m;
 
@@ -28,7 +28,7 @@ mdlr('[html]todo-overview', m => {
 
 })
 
-mdlr('[html]todo-input', m => {
+mdlr('[html]tutorial-todo-input', m => {
 
   const { EventEmitter } = m.require('event-emitter');
   const { html, css } = m;
@@ -59,19 +59,19 @@ mdlr('[html]todo-input', m => {
 
 })
 
-mdlr('[html]todo', m => {
+mdlr('[html]tutorial-todo', m => {
 
   const { log } = m.require('html-logger');
 
-  m.require('[html]todo-overview');
-  m.require('[html]todo-input');
+  m.require('[html]tutorial-todo-overview');
+  m.require('[html]tutorial-todo-input');
 
   const { html, css } = m;
 
   html`
     <header><h1>TODO list</h1></header>
-    <m-todo-input{input}></m-todo-input>
-    <m-todo-overview{todoList}></m-todo-overview>`;
+    <tutorial-todo-input{input} />
+    <tutorial-todo-overview{todoList} />`;
 
   css`
     :where(*) {

@@ -1,4 +1,4 @@
-mdlr('[html]numeric-input', m => {
+mdlr('[html]tutorial-numeric-input', m => {
 
   m.html`
     <label>

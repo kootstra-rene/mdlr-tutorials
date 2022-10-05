@@ -1,4 +1,4 @@
-mdlr('[html]pointer-events', m => {
+mdlr('[html]tutorial-pointer-events', m => {
 
     m.html`<div on={pointermove}>pointer-position: {x}, {y} {e}</div>`;
   
