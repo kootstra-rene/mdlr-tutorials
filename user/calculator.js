@@ -104,6 +104,7 @@ mdlr('[html]tutorial-calculator', m => {
           this.result = this.#evaluteInput();
           break;
       }
+      m.render(this);
     }
 
     #evaluteInput() {

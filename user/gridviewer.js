@@ -62,11 +62,13 @@ mdlr('[html]tutorial-grid-viewer', m => {
     scrollx(e) {
       const index = Math.round(e.x / (e.target.clientWidth-1) * (100 - this.cols.length));
       this.colOffset = index;
+      m.render(this);
     }
 
     scrolly(e) {
       const index = Math.round(e.y / (e.target.clientHeight-1) * (10000 - this.rows.length));
       this.rowOffset = index;
+      m.render(this);
     }
   }
 

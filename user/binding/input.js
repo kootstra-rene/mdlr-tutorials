@@ -1,6 +1,6 @@
 mdlr('[html]tutorial-input', m => {
 
-  m.html`<input value={content} on={input}><div>hello, {content}</div>`;
+  m.html`<input value={content} on={input} /><div>hello, {content}</div>`;
 
   m.css`div { 
     color: white; 
@@ -12,6 +12,7 @@ mdlr('[html]tutorial-input', m => {
 
     input(e) {
       this.content = e.target.value;
+      m.render(this);
     }
   }
 

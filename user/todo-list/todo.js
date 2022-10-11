@@ -4,7 +4,7 @@ mdlr('[html]tutorial-todo-overview', m => {
 
   html`
     {#each todo in todoList}
-      <span>- {todo.description}</span><br>
+      <span>- {todo.description}</span><br/>
     {:else}
       <span>You have nothing todo.</span>
     {/each}`;
@@ -33,7 +33,7 @@ mdlr('[html]tutorial-todo-input', m => {
   const { EventEmitter } = m.require('event-emitter');
   const { html, css } = m;
 
-  html`<input{}> <button on={click}>create</button>`;
+  html`<input{} /><button on={click}>create</button>`;
 
   css`
     :root {

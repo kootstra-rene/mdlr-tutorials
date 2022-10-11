@@ -1,30 +1,29 @@
 mdlr('[html]tutorial-numeric-input', m => {
 
   m.html`
-    <label>
-      <input type=number value={a} on={change:changeA} min=0 max=10>
-      <input type=range value={a} on={change:changeA} min=0 max=10>
-    </label>
-    <br>
-    <label>
-      <input type=number value={b} on={change:changeB} min=0 max=10>
-      <input type=range value={b} on={change:changeB} min=0 max=10>
-    </label>
+  <label>
+    <input type=number value={a} on={change:changeA} min=0 max=10 />
+    <input type=range value={a} on={change:changeA} min=0 max=10 />
+  </label>
+  <br/>
+  <label>
+    <input type=number value={b} on={change:changeB} min=0 max=10 />
+    <input type=range value={b} on={change:changeB} min=0 max=10 />
+  </label>
 
-    <p>{a} + {b} = {+a + +b}</p>`; // +a and +b are explicit conversions to number
+  <p>{a} + {b} = {+a + +b}</p>`; // +a and +b are explicit conversions to number
 
   m.css`
-    :root {
-      display: inline-block;
-      background-color: #111;
-      color: #ccc;
-      padding: 0.5em;
-    }
+  :root {
+    display: inline-block;
+    background-color: #111;
+    color: #ccc;
+    padding: 0.5em;
+  }
 
-    p {
-      margin: 0.5em 0 0 0;
-    }
-    `;
+  p {
+    margin: 0.5em 0 0 0;
+  }`;
 
   return class {
     a = 0;
@@ -32,10 +31,12 @@ mdlr('[html]tutorial-numeric-input', m => {
 
     changeA(e) {
       this.a = e.target.value;
+      m.render(this);
     }
 
     changeB(e) {
       this.b = e.target.value;
+      m.render(this);
     }
   }
 

@@ -3,7 +3,7 @@ mdlr('[html]tutorial-svg-clock', m => {
   m.html`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 100 100">
       <circle class="dialplate" r="48" />
-      <text x="0" y="18" dominant-baseline="middle" text-anchor="middle">mdlr</text>
+      <text x="0" y="18" dominant-baseline="middle" text-anchor="middle" >mdlr</text>
 
       {#each m in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]}
         <line class="major" y1="35" y2="45" transform="rotate({6 * m})" stroke-linecap="round" />
@@ -32,7 +32,7 @@ mdlr('[html]tutorial-svg-clock', m => {
     }
     
     .major {
-      stroke: #333;
+      stroke: #666;
       stroke-width: 1;
     }
 
@@ -42,7 +42,7 @@ mdlr('[html]tutorial-svg-clock', m => {
     }
 
     .hour {
-      stroke: #333;
+      stroke: #555;
     }
 
     .minute {
@@ -54,7 +54,7 @@ mdlr('[html]tutorial-svg-clock', m => {
     }
 
     text {
-      font: bold 3px sans-serif;
+      font: bold 7px sans-serif;
       fill: #999;
     }
 

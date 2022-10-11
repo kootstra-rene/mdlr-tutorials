@@ -1,9 +1,9 @@
 mdlr('[html]tutorial-form', m => {
   m.html`
     <form action="/api/form" method="post">
-      <label for="name">name:</label><input type="text" id="name" name="user_name"><br>
-      <label for="mail">e-mail:</label><input type="email" id="mail" name="user_mail"><br>
-      <br>
+      <label for="name">name:</label><input type="text" id="name" name="user_name"/><br/>
+      <label for="mail">e-mail:</label><input type="email" id="mail" name="user_mail"/><br/>
+      <br/>
       <button type="submit">submit</button>
     </form>`;
 

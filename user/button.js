@@ -7,6 +7,7 @@ mdlr('[html]tutorial-button', m => {
 
     click() {
       ++this.count;
+      m.render(this);
     }
   }
 })
@@ -35,6 +36,7 @@ mdlr('[html]tutorial-button-styled', m => {
 
     click() {
       ++this.count;
+      m.render(this);
     }
   }
 })

@@ -2,7 +2,7 @@ mdlr('[html]tutorial-hacker-news', m => {
 
   m.html`
     {#each item in newsItems}
-      <a href="{item.url}">{item.title}</a><br>
+      <a href="{item.url}">{item.title}</a><br/>
     {/each}`;
 
   m.css`
