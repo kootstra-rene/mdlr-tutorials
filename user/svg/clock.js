@@ -1,9 +1,11 @@
 mdlr('[html]tutorial-svg-clock', m => {
 
+  const utcOffset = (new Date()).getTimezoneOffset();
+
   m.html`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 100 100">
       <circle class="dialplate" r="48" />
-      <text x="0" y="18" dominant-baseline="middle" text-anchor="middle" >mdlr</text>
+      <text x="0" y="18" dominant-baseline="middle" text-anchor="middle" >{logo}</text>
 
       {#each m in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]}
         <line class="major" y1="35" y2="45" transform="rotate({6 * m})" stroke-linecap="round" />
@@ -64,12 +66,15 @@ mdlr('[html]tutorial-svg-clock', m => {
     }`;
 
   return class {
+    logo = 'mdlr';
+    offset = 0; // in minutes
     hours = 0;
     minutes = 0;
     seconds = 0;
 
     #updateTime() {
-      let time = new Date();
+      const tzOffset = (this.offset + utcOffset) * 60 * 1000;
+      let time = new Date(Date.now() + tzOffset);
       this.hours = time.getHours();
       this.minutes = time.getMinutes();
       this.seconds = time.getSeconds();
