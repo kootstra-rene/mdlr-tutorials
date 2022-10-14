@@ -1,6 +1,6 @@
 mdlr('[html]blog-post-section-no-text', m => {
 
-  m.html`<img src="{url}" />`;
+  m.html`<img src="{url}"/>`;
 
   m.css`
   :root {
@@ -12,8 +12,7 @@ mdlr('[html]blog-post-section-no-text', m => {
   img {
     max-width: 100%;
     height: auto;
-  }
-  `;
+  }`;
 
   return class {
     url = null;

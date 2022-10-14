@@ -1,27 +1,21 @@
 mdlr('[html]blog-post-section-text-right', m => {
 
-  m.html`
-  <img src="{url}" />
-  <p>{text}</p>
-  `;
+  m.html`<img src="{url}"/>{text}`;
 
   m.css`
   :root {
-    display: flex;
-  }
-  p {
-    flex: 80;
+    display: inline-block;
     text-align: justify;
+    font-size: 1.2em;
+    line-height: 1.2em;
   }
   img {
-    flex: 20;
-    min-width: 10%;
-    min-height: 10%;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-  `;
+    float: left;
+    width : 6em;
+    height: 6em;
+    padding: 0 0.6em 0.5em 0;
+  }`;
+
   return class {
     url = null;
     text = null;
