@@ -124,7 +124,7 @@ mdlr('[html]mdlr-blog', m => {
         m.redraw(this);
       });
       
-      this.blog = await fetch(`/user/blog/posts/all.json`).then(r => r.json());
+      this.blog = await fetch(`/user/blog/all.json`).then(r => r.json());
       m.redraw(this);
     }
 

@@ -1,7 +1,8 @@
 mdlr('[html]blog-overview-item', m => {
 
+  m.require('[html]router-link');
 
-  m.html`{title} + {meta.slug} <button on={click}>link</button>`;
+  m.html`{title} + {meta.slug} <router-link href={href()} text="link" />`;
 
   m.css``;
 
@@ -9,9 +10,10 @@ mdlr('[html]blog-overview-item', m => {
     title = null;
     meta = null;
 
-    click() {
-      m.redirect(`#/post/${this.meta.slug}`);
+    href () {
+      return `#/${this.meta?.slug}`;
     }
+
   }
 
 })
