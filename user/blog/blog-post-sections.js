@@ -10,13 +10,13 @@ mdlr('[html]blog-post-sections', m => {
   <blog-post-tldr{=} />
   {#each section in sections}
     {#if section.type === 'text'}
-      <blog-post-section-text text={section.text} />
+      <blog-post-section-text{=section} />
     {:elseif section.type === 'no-text'}
-      <blog-post-section-no-text url={section.url} />
+      <blog-post-section-no-text{=section} />
     {:elseif section.type === 'text-right'}
-      <blog-post-section-text-right text={section.text} url={section.url} />
+      <blog-post-section-text-right{=section} />
     {:elseif section.type === 'text-left'}
-      <blog-post-section-text-left text={section.text} url={section.url} />
+      <blog-post-section-text-left{=section} />
     {:else}
       <div>{section.text ?? ''}</div>
     {/if}

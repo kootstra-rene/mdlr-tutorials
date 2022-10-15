@@ -11,7 +11,8 @@ mdlr('[html]blog-post-section-no-text', m => {
   
   img {
     max-width: 100%;
-    height: auto;
+    height: 100%;
+    width: 100%;
   }`;
 
   return class {

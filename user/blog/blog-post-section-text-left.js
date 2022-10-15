@@ -11,8 +11,8 @@ mdlr('[html]blog-post-section-text-left', m => {
   }
   img {
     float: right;
-    width : 6em;
-    height: 6em;
+    width : auto;
+    height: 7.2em;
     padding: 0 0 0.5em 0.6em;
   }`;
 
