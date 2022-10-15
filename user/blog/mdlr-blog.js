@@ -1,3 +1,73 @@
+mdlr('[unit]markdown', m => {
+
+  const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
+  const linebreakReqEx = /\u0020{2,2}\n/mg;
+  const headingReqEx = /^\u0020{0,3}(?<heading>#{1,6})\u0020*(?<text>[^\n]*)/g;
+  const linkReqEx = /\[(?<text>[^\]]*)\]\((?<href>[^\)]*)\)/g;
+  const inlineReqEx = /!\[(?<text>[^\]]*)\]\((?<href>[^\)\|]*)(?:\|(?<props>[^\)]*))?\)/g;
+  const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
+  const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
+  const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
+
+  const emphasis = {otag:['<i>','<b>','<b><i>'], etag:['</i>','</b>','</i></b>']};
+  const strike = {otag:['<u>','<s>'], etag:['</u>','</s>']};
+  const script = {otag:['<sub>','<sup>'], etag:['</sub>','</sup>']};
+
+  function emphasisReplacer(match, p1, p2, p3) {
+    if (p1.length !== p3.length) return match;
+    const type = p1.length - 1;
+    return `${emphasis.otag[type]}${p2}${emphasis.etag[type]}`;
+  }
+
+  function strikeReplacer(match, p1, p2, p3) {
+    if (p1.length !== p3.length) return match;
+    const type = p1.length - 1;
+    return `${strike.otag[type]}${p2}${strike.etag[type]}`;
+  }
+
+  function scriptReplacer(match, p1, p2, p3) {
+    if (p1.length !== p3.length) return match;
+    const type = p1.length - 1;
+    return `${script.otag[type]}${p2}${script.etag[type]}`;
+  }
+
+  function linebreakReplacer(match) {
+    return '<br />';
+  }
+
+  function headingReplacer(match, p1, p2) {
+    return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
+  }
+
+  function linkReplacer(match, p1, p2) {
+    return `<a href="${p2}">${p1}</a>`;
+  }
+
+  function inlineReplacer(match, p1, p2, p3) {
+    console.log(p1,p2,p3)
+    // alignment << left, >> right, <> justify, >< center, +< float-left >+ float-right, so support for properties
+    // [](...|...)
+    if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3}/>`;
+    if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" sandbox="allow-scripts" ${p3}></iframe>`;
+    return '???';
+  }
+
+  function md(strings, ...values) {
+    return String
+      .raw({ raw: strings }, ...values)
+      .replace(inlineReqEx, inlineReplacer)
+      .replace(linebreakReqEx, linebreakReplacer)
+      .replace(whiteSpaceRegEx, '')
+      .replace(headingReqEx, headingReplacer)
+      .replace(emphasisRegEx, emphasisReplacer)
+      .replace(strikeRegEx, strikeReplacer)
+      .replace(scriptRegEx, scriptReplacer)
+      .replace(linkReqEx, linkReplacer)
+  }
+  return { md };
+
+})
+
 mdlr('[html]mdlr-blog', m => {
 
   const { blog } = m.require('mdlr-posts');
@@ -79,6 +149,7 @@ mdlr('[html]mdlr-blog', m => {
         const post = this.blog.find(post => post.meta.slug === slug);
         // console.log(slug, post);
         this.post = post;
+        if (!this.post) this.hash = '#/';
       }
     }
   }

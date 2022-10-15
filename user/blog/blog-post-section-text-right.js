@@ -1,6 +1,10 @@
 mdlr('[html]blog-post-section-text-right', m => {
 
-  m.html`<img src="{url}"/>{text}`;
+  const { md } = m.require('markdown');
+
+  m.html`
+  {#if caption}{@html markdownCaption()}{/if}
+  <img src="{url}"/><div>{@html markdownText()}</div>`;
 
   m.css`
   :root {
@@ -19,6 +23,14 @@ mdlr('[html]blog-post-section-text-right', m => {
   return class {
     url = null;
     text = null;
+    caption = null;
+
+    markdownCaption() {
+      return md`${this.caption}`;
+    }
+    markdownText() {
+      return md`${this.text}`;
+    }
   } 
 
 })
