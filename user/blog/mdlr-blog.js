@@ -1,5 +1,7 @@
 mdlr('[unit]markdown', m => {
 
+  const { $www } = m.require('www-root');
+
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
   const headingReqEx = /^\u0020{0,3}(?<heading>#{1,6})\u0020*(?<text>[^\n]*)/g;
@@ -9,9 +11,9 @@ mdlr('[unit]markdown', m => {
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
 
-  const emphasis = {otag:['<i>','<b>','<b><i>'], etag:['</i>','</b>','</i></b>']};
-  const strike = {otag:['<u>','<s>'], etag:['</u>','</s>']};
-  const script = {otag:['<sub>','<sup>'], etag:['</sub>','</sup>']};
+  const emphasis = { otag: ['<i>', '<b>', '<b><i>'], etag: ['</i>', '</b>', '</i></b>'] };
+  const strike = { otag: ['<u>', '<s>'], etag: ['</u>', '</s>'] };
+  const script = { otag: ['<sub>', '<sup>'], etag: ['</sub>', '</sup>'] };
 
   function emphasisReplacer(match, p1, p2, p3) {
     if (p1.length !== p3.length) return match;
@@ -32,7 +34,7 @@ mdlr('[unit]markdown', m => {
   }
 
   function linebreakReplacer(match) {
-    const breaks = (match.length-1) >> 1;
+    const breaks = (match.length - 1) >> 1;
     return '<br>'.repeat(breaks);
   }
 
@@ -45,9 +47,13 @@ mdlr('[unit]markdown', m => {
   }
 
   function inlineReplacer(match, p1, p2, p3) {
+    if (p2.startsWith('$www/')) {
+      p2 = p2.replace('$www/', $www);
+    }
+
     if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
     if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
-    return '???';
+    return `<iframe id="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
   }
 
   function md(strings, ...values) {
@@ -63,6 +69,14 @@ mdlr('[unit]markdown', m => {
       .replace(linkReqEx, linkReplacer)
   }
   return { md };
+
+})
+
+mdlr('[unit]www-root', m => {
+
+  const $www = window.location.pathname === '/bundler/html' ? `${window.location.origin}/docs/` : window.location.href.split('#')[0];
+
+  return { $www };
 
 })
 
@@ -84,6 +98,8 @@ mdlr('[html]router-link', m => {
 })
 
 mdlr('[html]mdlr-blog', m => {
+
+  const { $www } = m.require('www-root');
 
   m.require('[html]blog-overview');
   m.require('[html]blog-post');
@@ -129,6 +145,7 @@ mdlr('[html]mdlr-blog', m => {
     constructor() {
       this.router(window.location.href);
       if (!window.location.hash != this.hash) window.location = this.hash;
+
     }
 
     async connected() {
@@ -142,8 +159,8 @@ mdlr('[html]mdlr-blog', m => {
         this.router(e.newURL);
         m.redraw(this);
       });
-      
-      this.blog = await fetch(`/user/blog/all.json`).then(r => r.json());
+
+      this.blog = await fetch(`${$www}/blog/all.json`).then(r => r.json());
       m.redraw(this);
     }
 

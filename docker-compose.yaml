@@ -4,5 +4,6 @@ services:
     image: retakenroots/mdlr:latest
     volumes:
       - ./user/:/app/user/
+      - ./docs/:/app/docs/
     ports:
       - "8443:443"
