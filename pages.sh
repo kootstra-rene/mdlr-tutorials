@@ -1,5 +1,9 @@
-curl -s --insecure 'https://localhost:8443/bundler/html?unit=\[html\]mdlr-blog' | gunzip | sed 's/^ *//g' > docs/index.html
+#!/bin/bash
 
-curl -s --insecure 'https://localhost:8443/bundler/html?unit=\[html\]tutorial-svg-clock' | gunzip | sed 's/^ *//g' > docs/resources/svg-clock.html
+getHtml() {
+  curl -s --insecure 'https://localhost:8443/bundler/html?unit='$1 | gunzip | sed 's/^ *//g' > $2
+}
 
-curl -s --insecure 'https://localhost:8443/bundler/html?unit=\[html\]tutorial-firewatch' | gunzip | sed 's/^ *//g' > docs/resources/firewatch.html
+getHtml '\[html\]mdlr-blog' docs/index.html
+getHtml '\[html\]tutorial-svg-clock' docs/resources/svg-clock.html
+getHtml '\[html\]tutorial-firewatch' docs/resources/firewatch.html
