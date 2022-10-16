@@ -13,6 +13,7 @@ mdlr('[html]blog-post-sections', m => {
   * {
     box-sizing: border-box;
     user-select: none;
+    font-family: sans-serif;
   }
   :root {
     height: 100%;

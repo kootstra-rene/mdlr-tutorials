@@ -52,8 +52,8 @@ mdlr('[unit]markdown', m => {
     }
 
     if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
-    if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
-    return `<iframe id="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
+    if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" ${p3 || ''}></iframe>`;
+    return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
   }
 
   function md(strings, ...values) {
@@ -159,6 +159,12 @@ mdlr('[html]mdlr-blog', m => {
     }
 
     async connected() {
+      const meta = document.createElement('meta');
+      meta.name = m.name;
+      meta.content = "Created with mdlr";
+      document.head.append(meta);
+
+      document.title = m.name;
       document.body.style.cssText = `
         height: 100vh;
         overflow-y: hidden;

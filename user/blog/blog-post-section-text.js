@@ -23,6 +23,7 @@ mdlr('[html]blog-post-section-text', m => {
 
   sup, sub {
     line-height: 0;
+    font-size: 70%;
   }
 
   iframe, img {
