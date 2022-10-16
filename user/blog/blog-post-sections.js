@@ -18,18 +18,7 @@ mdlr('[html]blog-post-sections', m => {
     height: 100%;
     overflow-y: auto;
     display: block;
-  }
-  
-  s {
-    text-decoration: underline;
-    text-underline-offset: -.25em;
-    text-decoration-skip-ink: none;    
-  }
-
-  sup, sub {
-    line-height: 0;
-  }
-  `;
+  }`;
 
   return class {
     tldr = null;

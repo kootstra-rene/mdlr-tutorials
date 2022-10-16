@@ -4,9 +4,9 @@ mdlr('[unit]markdown', m => {
 
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
-  const headingReqEx = /^\u0020{0,3}(?<heading>#{1,6})\u0020*(?<text>[^\n]*)/g;
-  const linkReqEx = /\[(?<text>[^\]]*)\]\((?<href>[^\)]*)\)/g;
-  const inlineReqEx = /!\[(?<text>[^\]]*)\]\((?<href>[^\)\|]*)(?:\|(?<props>[^\)]*))?\)/g;
+  const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
+  const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
+  const inlineReqEx = /!\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
@@ -84,7 +84,17 @@ mdlr('[html]router-link', m => {
 
   m.html`<a href={} on={click}>{text}</a>`;
 
-  m.css``;
+  m.css`
+  :root {
+    display:inline;
+  }
+  
+  a {
+    all: unset;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: inherit;
+  }`;
 
   return class {
     text = null;
@@ -143,8 +153,8 @@ mdlr('[html]mdlr-blog', m => {
     // options = null;
 
     constructor() {
-      this.router(window.location.href);
-      if (!window.location.hash != this.hash) window.location = this.hash;
+      // this.router(window.location.href);
+      // if (!window.location.hash != this.hash) window.location = this.hash;
 
     }
 
@@ -154,13 +164,17 @@ mdlr('[html]mdlr-blog', m => {
         overflow-y: hidden;
         position: absolute;
       `;
+
+      this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
+      this.router(window.location.href);
+      if (!window.location.hash != this.hash) window.location = this.hash;
+
       // primitive router
       window.addEventListener('hashchange', e => {
         this.router(e.newURL);
         m.redraw(this);
       });
 
-      this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
       m.redraw(this);
     }
 
@@ -180,7 +194,7 @@ mdlr('[html]mdlr-blog', m => {
         // search based on slug...
         const slug = this.hash.replace('#/', '');
         const post = this.blog.find(post => post.meta.slug === slug);
-        // console.log(slug, post);
+        console.log(slug, post);
         this.post = post;
         if (!this.post) this.hash = '#/';
       }

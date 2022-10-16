@@ -14,12 +14,26 @@ mdlr('[html]blog-post-section-text', m => {
     line-height: 1.2em;
     width: 100%;
   }
+
+  s {
+    text-decoration: underline;
+    text-underline-offset: -.25em;
+    text-decoration-skip-ink: none;    
+  }
+
+  sup, sub {
+    line-height: 0;
+  }
+
   iframe, img {
     border: 0;
-    aspect-ratio: 1 / 1;
     position: relative;
     height: 7.2em;
     width: auto;
+  }
+
+  iframe {
+    aspect-ratio: 1 / 1;
   }
   
   .float-left {
