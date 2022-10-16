@@ -110,8 +110,8 @@ post = null;
 // options = null;
 
 constructor() {
-this.router(window.location.href);
-if (!window.location.hash != this.hash) window.location = this.hash;
+// this.router(window.location.href);
+// if (!window.location.hash != this.hash) window.location = this.hash;
 
 }
 
@@ -121,13 +121,17 @@ height: 100vh;
 overflow-y: hidden;
 position: absolute;
 `;
+
+this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
+this.router(window.location.href);
+if (!window.location.hash != this.hash) window.location = this.hash;
+
 // primitive router
 window.addEventListener('hashchange', e => {
 this.router(e.newURL);
 m.redraw(this);
 });
 
-this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
 m.redraw(this);
 }
 
@@ -147,7 +151,7 @@ if (this.hash.startsWith('#/post/')) {
 // search based on slug...
 const slug = this.hash.replace('#/', '');
 const post = this.blog.find(post => post.meta.slug === slug);
-// console.log(slug, post);
+console.log(slug, post);
 this.post = post;
 if (!this.post) this.hash = '#/';
 }
@@ -472,15 +476,43 @@ mdlr('[html]blog-overview-item', m => {
 
 m.require('[html]router-link');
 
-m.html`{title} + {meta.slug} <router-link href={href()} text="link" />`;
+m.html`
+<h1>{title}</h1>
+<h3>{tldr}</h3>
+<router-link href={href()} text="more..."/>
+{#each tag in meta.tags}<li>{tag}</li>{/each}`;
 
-m.css``;
+m.css`
+li {
+all: unset;
+box-sizing: border-box;
+border: 1px solid #777;
+font-size:0.8em;
+line-height: 1.0em;
+height: 1.3em;
+padding: 0 0.5em;
+border-radius: 0.9em;
+color: #777;
+float: right;
+margin: 0 0.25em;
+}
+
+li + li {
+margin: 0 0 0 0.25em;
+}
+
+router-link {
+color: #777;
+text-decoration-color: #bbb;
+}
+`;
 
 return class {
 title = null;
+tldr = null;
 meta = null;
 
-href () {
+href() {
 return `#/${this.meta?.slug}`;
 }
 
@@ -507,18 +539,7 @@ user-select: none;
 height: 100%;
 overflow-y: auto;
 display: block;
-}
-
-s {
-text-decoration: underline;
-text-underline-offset: -.25em;
-text-decoration-skip-ink: none;    
-}
-
-sup, sub {
-line-height: 0;
-}
-`;
+}`;
 
 return class {
 tldr = null;
@@ -573,7 +594,17 @@ mdlr('[html]router-link', m => {
 
 m.html`<a href={} on={click}>{text}</a>`;
 
-m.css``;
+m.css`
+:root {
+display:inline;
+}
+
+a {
+all: unset;
+cursor: pointer;
+text-decoration: underline;
+text-decoration-color: inherit;
+}`;
 
 return class {
 text = null;
@@ -622,12 +653,26 @@ font-size: 1.2em;
 line-height: 1.2em;
 width: 100%;
 }
+
+s {
+text-decoration: underline;
+text-underline-offset: -.25em;
+text-decoration-skip-ink: none;    
+}
+
+sup, sub {
+line-height: 0;
+}
+
 iframe, img {
 border: 0;
-aspect-ratio: 1 / 1;
 position: relative;
 height: 7.2em;
 width: auto;
+}
+
+iframe {
+aspect-ratio: 1 / 1;
 }
 
 .float-left {
@@ -667,9 +712,9 @@ const { $www } = m.require('www-root');
 
 const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
 const linebreakReqEx = /\u0020{2,4}\n/mg;
-const headingReqEx = /^\u0020{0,3}(?<heading>#{1,6})\u0020*(?<text>[^\n]*)/g;
-const linkReqEx = /\[(?<text>[^\]]*)\]\((?<href>[^\)]*)\)/g;
-const inlineReqEx = /!\[(?<text>[^\]]*)\]\((?<href>[^\)\|]*)(?:\|(?<props>[^\)]*))?\)/g;
+const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
+const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
+const inlineReqEx = /!\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
 const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
 const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
 const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
