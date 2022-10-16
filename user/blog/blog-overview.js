@@ -7,6 +7,7 @@ mdlr('[html]blog-overview', m => {
   <blog-post-title{=} />
   {#each post in blog}
     <blog-overview-item{=post} />
+    <hr />
   {:else}
     <span>...</span>
   {/each}
@@ -14,19 +15,16 @@ mdlr('[html]blog-overview', m => {
 
   m.css`
   :root {
-    display: flex;
-    flex-direction: column;
+    display: block;
   }
 
   blog-post-title {
     line-height: 8vh;
     height: 8vh;
-    flex: none;
   }
   
   blog-overview-item {
-    flex: 1;
-    border: 1px solid #ccc;
+    margin: 0.5em 0;
   }
   
   blog-overview-item + blog-overview-item {
@@ -35,7 +33,7 @@ mdlr('[html]blog-overview', m => {
 
   return class {
     blog = null;
-    title = 'MDLR development blog';
+    title = 'MDLR Tutorials';
   }
 
 })

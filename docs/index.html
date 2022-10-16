@@ -1,22 +1,18 @@
 <!DOCTYPE html><html lang="en"><head><style>:where(body){all: unset;margin:0;overflow:hidden;}</style></head><body><script type="text/javascript">'use strict';
 globalThis.mdlr = (() => {
-
 const m = {
 names: /^(?:\[(?<t>[a-z]+)\])?(?<n>[-:a-z0-9]+)$/,
 modules: new Map,
 loader: new Map,
 checks: new Set,
-
 info: (name, type = 'unit') => {
 const [ , t, n ] = m.names.exec(name) ?? [];
 return { type:t??type, n:`[${t??type}]${n}` };
 },
-
 load: (info, context) => {
 return m.loader.get(info.type)(info, context);
 }
 }
-
 m.loader
 .set('unit', (info, context) => {
 const scope = new Modular(info, context);
@@ -32,7 +28,6 @@ return unit;
 })
 .set('mdlr', m.loader.get('unit'))
 .set('node', info => require(info.n.replace('[node]', '')));
-
 class Modular {
 constructor(info, context) {
 this.context = context ?? {};
@@ -41,20 +36,16 @@ if (info.type === 'mdlr') {
 this.$ = k => m[k];
 }
 }
-
 require(name, context) {
 if (this.context[name]) {
 return this.context[name];
 }
-
 const info = m.info(name);
 return m.load(info, context);
 }
 }
-
 return (name, context) => {
 const info = m.info(name);
-
 if (context && context.constructor === Function) {
 m.modules.set(info.n, context);
 }
@@ -62,15 +53,11 @@ else {
 return m.load(info, context);
 }
 }
-
 })()
 mdlr('[html]mdlr-blog', m => {
-
 const { $www } = m.require('www-root');
-
 m.require('[html]blog-overview');
 m.require('[html]blog-post');
-
 m.html`
 <header>header</header>
 {#if hash === '#/'}
@@ -79,7 +66,6 @@ m.html`
 <blog-post{=post} />
 {/if}
 <footer>footer</footer>`
-
 m.css`
 :root {
 display:flex;
@@ -88,6 +74,8 @@ width: 60vw;
 height: 100%;
 transform: translate(20vw,0);
 align-items: center;
+box-shadow: rgba(0, 0, 0, 0.5) 0px 6px 32px 0px, rgba(0, 0, 0, 0.6) 0px 6px 16px 0px;
+background-color: #fff;
 }
 blog-post, blog-overview {
 width: 60vw;
@@ -101,182 +89,149 @@ flex: none;
 text-align: center;
 line-height: 3vh;
 height: 3vh;
+}
+footer {
+line-height: 2vh;
+height:2vh;
 }`;
-
 return class {
 hash = '#/';
 blog = [];
 post = null;
 // options = null;
-
 constructor() {
 // this.router(window.location.href);
 // if (!window.location.hash != this.hash) window.location = this.hash;
-
 }
-
 async connected() {
+const meta = document.createElement('meta');
+meta.name = m.name;
+meta.content = "Created with mdlr";
+document.head.append(meta);
+document.title = m.name;
 document.body.style.cssText = `
 height: 100vh;
+width: 100vw;
 overflow-y: hidden;
 position: absolute;
+background-color:#666;
 `;
-
 this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
 this.router(window.location.href);
 if (!window.location.hash != this.hash) window.location = this.hash;
-
 // primitive router
 window.addEventListener('hashchange', e => {
 this.router(e.newURL);
 m.redraw(this);
 });
-
 m.redraw(this);
 }
-
 router(newURL) {
 const url = new URL(newURL);
 const [hash, search] = url.hash.split('?');
-
 // const options = new URLSearchParams(search);
 // this.options = [...options].reduce((a, [key, value]) => {
 //   a[key] = value;
 //   return a;
 // }, {});
-
 this.hash = hash || '#/';
-
 if (this.hash.startsWith('#/post/')) {
 // search based on slug...
 const slug = this.hash.replace('#/', '');
-const post = this.blog.find(post => post.meta.slug === slug);
-console.log(slug, post);
-this.post = post;
+this.post = this.blog.find(post => post.meta.slug === slug);;
 if (!this.post) this.hash = '#/';
 }
 }
 }
-
 })
 mdlr('[unit]www-root', m => {
-
 const $www = window.location.pathname === '/bundler/html' ? `${window.location.origin}/docs/` : window.location.href.split('#')[0];
-
 return { $www };
-
 })
 mdlr('[html]blog-overview', m => {
-
 m.require('[html]blog-post-title');
 m.require('[html]blog-overview-item');
-
 m.html`
 <blog-post-title{=} />
 {#each post in blog}
 <blog-overview-item{=post} />
+<hr />
 {:else}
 <span>...</span>
 {/each}
 `
-
 m.css`
 :root {
-display: flex;
-flex-direction: column;
+display: block;
 }
-
 blog-post-title {
 line-height: 8vh;
 height: 8vh;
-flex: none;
 }
-
 blog-overview-item {
-flex: 1;
-border: 1px solid #ccc;
+margin: 0.5em 0;
 }
-
 blog-overview-item + blog-overview-item {
 border-top: 0;
 }`;
-
 return class {
 blog = null;
-title = 'MDLR development blog';
+title = 'MDLR Tutorials';
 }
-
 })
 mdlr('[html]blog-post', m => {
-
 m.require('[html]blog-post-title');
 m.require('[html]blog-post-sections');
-
 m.html`
 <blog-post-title{=} />
 <blog-post-sections{=} />`
-
 m.css`
 :root {
 display: flex;
 flex-direction: column;
 }
-
 blog-post-title {
 line-height: 8vh;
 height: 8vh;
 flex: none;
 }
-
 blog-post-sections {
 flex: 1;
 }`;
-
 return class {
 title = null;
 tldr = null;
 sections = null;
 }
-
 })
 mdlr('[mdlr]html-loader', _ => {
 const cache = new Map;
 const $cache = new Map;
-
 const { tokenizer } = _.require('html-tokenizer');
 const eachRegEx = /^(?<item>[a-zA-Z0-9-]+(,\s*[a-zA-Z0-9-]+)?) in (?<member>[^}]+)$/;
 const attrRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}:]*?)(:(?<h>[^}]*))?})?$/;
 const copyRegEx = /^\{(?<code>[^}]+)\}|(?<text>.*)$/;
-
 function defineElement(name, e, $) {
 customElements.define(name, class extends HTMLElement {
 #state = e.bind(new $);
-
 connectedCallback() {
 const s = this.#state;
-
 const record = { nodes: [], $root: this, e };
 $cache.set(s, record);
-
 e.create(s, record.nodes, record.$root);
-
 s.connected?.call(s, this);
 }
-
 disconnectedCallback() {
 const s = this.#state;
 e.delete(s);
 $cache.delete(s);
-
 s.disconnected?.call(s, this);
 }
-
 get $() {
 return this.#state;
 }
 });
 }
-
 function html(name, strings) {
 let create = 'let $i=0, $t=[]; $t[0] = $e[0] = $d.createDocumentFragment();\n';
 let update = 'let $i=0;\n';
@@ -287,9 +242,7 @@ let code;
 switch (type) {
 case 'open':
 const { n, e, h, d } = attrRegEx.exec(id).groups;
-
 const isHtmlModule = cache.has(n);
-
 const xmlns = (data.find(a => a.key === 'xmlns') ?? {}).value;
 create += `$e[++$i] = $d.createElementNS(${xmlns ? `'${xmlns}'` : '($t[0].namespaceURI ?? \'http://www.w3.org/1999/xhtml\')'}, '${n}');\n`;
 if (d) {
@@ -382,15 +335,12 @@ break;
 this.create = create;
 this.update = update;
 }
-
 function css(name, strings) {
 const block = /\s*(?<key>.+?)\s*\{(?<body>[^}]*)\}/g;
-
 let b, style = '';
 while (!!(b = block.exec(strings[0]))) {
 const { key, body } = b.groups;
 const keys = key.split(',').map(a => a.trim());
-
 keys.forEach(k => {
 if (k.indexOf(':root') === 0) {
 style += `${k.replace(':root', name)} {${body}}\n`;
@@ -405,33 +355,26 @@ e.id = name;
 e.textContent = style;
 document.head.append(e);
 }
-
 _.$('loader').set('html', (i, context) => {
 const name = i.n.replace('[html]', '');
 if (cache.has(name)) return;
-
 const config = {};
 const m = new _.constructor(i, context);
 m.html = html.bind(config);
 m.css = css.bind(config, name);
-
 const stateClass = _.$('modules').get(i.n)(m) ?? class { };
-
 const state = new stateClass;
 const names = Object.getOwnPropertyNames;
 const funcs = names(stateClass.prototype);
 const props = [...names(state), ...funcs].join(', ');
-
 const functor = new Function(`//${name}\nconst $d = document, $keys = new Set([${[...names(state)].map(a => `'${a}'`).join(',')}]); return {
 bind: $ => { ${funcs.map(f => `$.${f} = $.${f}.bind($);`).join('\n')}; return $; },
 create: ($, $e, $root) => {\nconst {${props}} = $\n${config.create}\$root.textContent='';\$root.append($e[0]);\n},
 update: ($, $e, $root) => {\nconst {${props}} = $;\n${config.update}},
 delete: () => {}
 }`);
-
 const e = functor();
 defineElement(name, e, stateClass);
-
 m.redraw = $ => {
 if (!$cache.has($)) return;
 const { nodes, $root, e } = $cache.get($);
@@ -446,43 +389,42 @@ m.redirect = path => {
 const { hash, href } = window.location;
 window.location.href = href.replace(hash, path);
 }
-
 cache.set(name, { stateClass, keys: [...names(state)] });
 window.cache = cache;
 })
 })
 mdlr('[html]blog-post-title', m => {
-
-m.html`<div>{title}</div>`
-
+m.html`<div>{title}</div>`;
 m.css`
 :root {
 display: block;
 white-space: nowrap;
 font-size: 2em;
 text-align: center;
-color: #111;
-background-color: #eee;
+background-color: #555;
 font-weight: bold;
+font-spacing:0.1em;
+box-shadow: inset 0 0px 50px #333;
 }
-`
-
+div {
+color: #ffffffe0;
+text-shadow: 1px 2px 4px #000, 0 0 0 #000, 1px 2px 4px #555;
+}`;
 return class {
 title = null;
 } 
-
 })
 mdlr('[html]blog-overview-item', m => {
-
 m.require('[html]router-link');
-
 m.html`
-<h1>{title}</h1>
-<h3>{tldr}</h3>
+<h1>{title}</h1><h2>{tldr}</h2>
 <router-link href={href()} text="more..."/>
 {#each tag in meta.tags}<li>{tag}</li>{/each}`;
-
 m.css`
+:root {
+display: block;
+padding: 0 1em;
+}
 li {
 all: unset;
 box-sizing: border-box;
@@ -495,79 +437,76 @@ border-radius: 0.9em;
 color: #777;
 float: right;
 margin: 0 0.25em;
+cursor: pointer
 }
-
 li + li {
 margin: 0 0 0 0.25em;
 }
-
+h1 {
+margin: 0;
+margin-top: 0.25em;
+font-size: 1.5em;
+}
+h2 {
+margin: 0;
+margin-bottom: 0.25em;
+color: #777;
+font-weight: unset;
+font-size: 1.1em;
+}
 router-link {
 color: #777;
 text-decoration-color: #bbb;
-}
-`;
-
+font-size: 0.8em;
+}`;
 return class {
 title = null;
 tldr = null;
 meta = null;
-
 href() {
 return `#/${this.meta?.slug}`;
 }
-
 }
-
 })
 mdlr('[html]blog-post-sections', m => {
-
 m.require('[html]blog-post-tldr');
 m.require('[html]blog-post-section-text');
-
 m.html`
 <blog-post-tldr{=} />
 {#each section in sections}
 <blog-post-section-text{=section} />
 {/each}`
-
 m.css`
 * {
 box-sizing: border-box;
 user-select: none;
+font-family: sans-serif;
 }
 :root {
 height: 100%;
 overflow-y: auto;
 display: block;
+box-shadow: 0 0 black;
 }`;
-
 return class {
 tldr = null;
 sections = null;
 } 
-
 })
 mdlr('[unit]html-tokenizer', m => {
-
 const attributesRegEx = /(?<key>[a-zA-Z0-9\-]+)=(?:"(?<value1>(?:\\"|[^"\r\n])*)"|(?<value2>(?:\\"|[^\x20>\r\n])*))/g;
 const tagRegEx = /(?<space>[\s]+)(?=<|$|{)|\<\/(?<close>[^>]+)\>|\<(?<open>(?<tag>[a-z0-9-]+)({[^}]*})?)[^>]*\>|{(?<hint>[#:\/@][a-z]+)[\s]*(?<body>({[^}]*}|[^{}]*)*)}|(?<text>[^<]+)/g;
-
 function getAttributes(match) {
 return [...match.matchAll(attributesRegEx)].map(a => a.groups).map(a => ({ key: a.key, value: (a.value1 ?? a.value2) }));
 }
-
 function* tokenizer(html) {
 tagRegEx.lastIndex = 0;
-
 const $ = (id, type, data = null) => ({ id, type, data });
-
 let m;
 while (null != (m = tagRegEx.exec(html))) {
 const { space, close, open, tag, hint, body, text } = m.groups;
-
 if (open) {
 yield $(open, 'open', getAttributes(m[0]));
-
 if (m[0].endsWith('/>')) {
 yield $(open, 'close');
 }
@@ -586,65 +525,50 @@ yield $(hint, 'hint', body);
 }
 }
 }
-
 return { tokenizer };
-
 })
 mdlr('[html]router-link', m => {
-
 m.html`<a href={} on={click}>{text}</a>`;
-
 m.css`
 :root {
 display:inline;
 }
-
 a {
 all: unset;
 cursor: pointer;
 text-decoration: underline;
 text-decoration-color: inherit;
 }`;
-
 return class {
 text = null;
 href = null;
-
 click(e) {
 m.redirect(this.href);
 }
 }
-
 })
 mdlr('[html]blog-post-tldr', m => {
-
-m.html`<div>{tldr}</div>`
-
+m.html`<div>{tldr}</div>`;
 m.css`
 :root {
 display: block;
 white-space: nowrap;
-font-size: 1.2em;
 line-height: 1.2em;
 text-align: center;
-color: #111;
-background-color: #fff;
-}
-`
-
+padding: 0.5em 0;
+color: #777;
+font-weight: unset;
+font-size: 1.1em;
+}`;
 return class {
 tldr = null;
 } 
-
 })
 mdlr('[html]blog-post-section-text', m => {
-
 const { md } = m.require('markdown');
-
 m.html`
 {#if caption}{@html markdownCaption()}{/if}
 {@html markdownText()}`;
-
 m.css`
 :root {
 display: inline-block;
@@ -652,51 +576,64 @@ text-align: justify;
 font-size: 1.2em;
 line-height: 1.2em;
 width: 100%;
+padding: 0 1em;
 }
-
 s {
 text-decoration: underline;
 text-underline-offset: -.25em;
 text-decoration-skip-ink: none;    
 }
-
 sup, sub {
 line-height: 0;
+font-size: 70%;
 }
-
 iframe, img {
 border: 0;
 position: relative;
 height: 7.2em;
 width: auto;
 }
-
 iframe {
 aspect-ratio: 1 / 1;
 }
-
 .float-left {
 float: left;
 padding: 0 0.6em 0.5em 0;
 }
-
 .float-right {
 float: right;
 padding: 0 0 0.5em 0.6em;
 }
-
 .center {
 display: block;
 padding: 0.5em;
 position: relative;
 left: 50%;
 transform: translate(-50%, 0);
+}
+pre {
+font-family: monospace;
+border-left: 0.25em solid #aaa;
+padding-left: 0.75em;
+font-size: 0.9em;
+line-height: 1.4em;
+}
+code {
+display:inline;
+font-family: monospace;
+background: #888;
+border-radius: 0.7em;
+padding: 0 0.5em 0.1em 0.5em;
+font-size: 0.9em;
+line-height: 1.4em;
+display: inline;
+top: -0.1em;
+position: relative;
+color: #fff;
 }`;
-
 return class {
 text = null;
 caption = null;
-
 markdownCaption() {
 return md`${this.caption}`;
 }
@@ -704,12 +641,9 @@ markdownText() {
 return md`${this.text}`;
 }
 } 
-
 })
 mdlr('[unit]markdown', m => {
-
 const { $www } = m.require('www-root');
-
 const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
 const linebreakReqEx = /\u0020{2,4}\n/mg;
 const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
@@ -718,66 +652,64 @@ const inlineReqEx = /!\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
 const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
 const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
 const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
-
+const codeRegEx = /(`{3,3})((?:[^`]+?|`)*?)(`{3,3})|(?:`([^`]+)`)/mg;
 const emphasis = { otag: ['<i>', '<b>', '<b><i>'], etag: ['</i>', '</b>', '</i></b>'] };
 const strike = { otag: ['<u>', '<s>'], etag: ['</u>', '</s>'] };
 const script = { otag: ['<sub>', '<sup>'], etag: ['</sub>', '</sup>'] };
-
 function emphasisReplacer(match, p1, p2, p3) {
 if (p1.length !== p3.length) return match;
 const type = p1.length - 1;
 return `${emphasis.otag[type]}${p2}${emphasis.etag[type]}`;
 }
-
 function strikeReplacer(match, p1, p2, p3) {
 if (p1.length !== p3.length) return match;
 const type = p1.length - 1;
 return `${strike.otag[type]}${p2}${strike.etag[type]}`;
 }
-
 function scriptReplacer(match, p1, p2, p3) {
 if (p1.length !== p3.length) return match;
 const type = p1.length - 1;
 return `${script.otag[type]}${p2}${script.etag[type]}`;
 }
-
+function codeReplacer(match, p1, p2, p3, p4) {
+if (p4?.length) {
+return `<code>${p4}</code>`;
+}
+if (p1?.length !== p3?.length) return match;
+return `<pre>${p2.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')}</pre>`;
+}
 function linebreakReplacer(match) {
 const breaks = (match.length - 1) >> 1;
 return '<br>'.repeat(breaks);
 }
-
 function headingReplacer(match, p1, p2) {
 return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
 }
-
 function linkReplacer(match, p1, p2) {
 return `<a href="${p2}">${p1}</a>`;
 }
-
 function inlineReplacer(match, p1, p2, p3) {
 if (p2.startsWith('$www/')) {
 p2 = p2.replace('$www/', $www);
 }
-
 if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
-if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
-return `<iframe id="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
+if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" ${p3 || ''}></iframe>`;
+return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
 }
-
 function md(strings, ...values) {
 return String
 .raw({ raw: strings }, ...values)
 .replace(inlineReqEx, inlineReplacer)
-.replace(linebreakReqEx, linebreakReplacer)
-.replace(whiteSpaceRegEx, '')
 .replace(headingReqEx, headingReplacer)
 .replace(emphasisRegEx, emphasisReplacer)
 .replace(strikeRegEx, strikeReplacer)
 .replace(scriptRegEx, scriptReplacer)
 .replace(linkReqEx, linkReplacer)
+.replace(codeRegEx, codeReplacer)
+.replace(linebreakReqEx, linebreakReplacer)
+.replace(whiteSpaceRegEx, '')
 }
 return { md };
-
 })
 mdlr('[mdlr]html-loader');
 mdlr('[html]mdlr-blog'); document.body.innerHTML = '<mdlr-blog></mdlr-blog>';</script></body></html>

@@ -10,6 +10,7 @@ mdlr('[unit]markdown', m => {
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
+  const codeRegEx = /(`{3,3})((?:[^`]+?|`)*?)(`{3,3})|(?:`([^`]+)`)/mg;
 
   const emphasis = { otag: ['<i>', '<b>', '<b><i>'], etag: ['</i>', '</b>', '</i></b>'] };
   const strike = { otag: ['<u>', '<s>'], etag: ['</u>', '</s>'] };
@@ -31,6 +32,14 @@ mdlr('[unit]markdown', m => {
     if (p1.length !== p3.length) return match;
     const type = p1.length - 1;
     return `${script.otag[type]}${p2}${script.etag[type]}`;
+  }
+
+  function codeReplacer(match, p1, p2, p3, p4) {
+    if (p4?.length) {
+      return `<code>${p4}</code>`;
+    }
+    if (p1?.length !== p3?.length) return match;
+    return `<pre>${p2.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')}</pre>`;
   }
 
   function linebreakReplacer(match) {
@@ -60,13 +69,14 @@ mdlr('[unit]markdown', m => {
     return String
       .raw({ raw: strings }, ...values)
       .replace(inlineReqEx, inlineReplacer)
-      .replace(linebreakReqEx, linebreakReplacer)
-      .replace(whiteSpaceRegEx, '')
       .replace(headingReqEx, headingReplacer)
       .replace(emphasisRegEx, emphasisReplacer)
       .replace(strikeRegEx, strikeReplacer)
       .replace(scriptRegEx, scriptReplacer)
       .replace(linkReqEx, linkReplacer)
+      .replace(codeRegEx, codeReplacer)
+      .replace(linebreakReqEx, linebreakReplacer)
+      .replace(whiteSpaceRegEx, '')
   }
   return { md };
 
@@ -131,6 +141,8 @@ mdlr('[html]mdlr-blog', m => {
     height: 100%;
     transform: translate(20vw,0);
     align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 6px 32px 0px, rgba(0, 0, 0, 0.6) 0px 6px 16px 0px;
+    background-color: #fff;
   }
   blog-post, blog-overview {
     width: 60vw;
@@ -144,6 +156,11 @@ mdlr('[html]mdlr-blog', m => {
     text-align: center;
     line-height: 3vh;
     height: 3vh;
+  }
+  
+  footer {
+    line-height: 2vh;
+    height:2vh;
   }`;
 
   return class {
@@ -167,8 +184,10 @@ mdlr('[html]mdlr-blog', m => {
       document.title = m.name;
       document.body.style.cssText = `
         height: 100vh;
+        width: 100vw;
         overflow-y: hidden;
         position: absolute;
+        background-color:#666;
       `;
 
       this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
@@ -199,9 +218,7 @@ mdlr('[html]mdlr-blog', m => {
       if (this.hash.startsWith('#/post/')) {
         // search based on slug...
         const slug = this.hash.replace('#/', '');
-        const post = this.blog.find(post => post.meta.slug === slug);
-        console.log(slug, post);
-        this.post = post;
+        this.post = this.blog.find(post => post.meta.slug === slug);;
         if (!this.post) this.hash = '#/';
       }
     }

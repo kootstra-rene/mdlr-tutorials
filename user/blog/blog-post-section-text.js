@@ -13,6 +13,7 @@ mdlr('[html]blog-post-section-text', m => {
     font-size: 1.2em;
     line-height: 1.2em;
     width: 100%;
+    padding: 0 1em;
   }
 
   s {
@@ -53,6 +54,28 @@ mdlr('[html]blog-post-section-text', m => {
     position: relative;
     left: 50%;
     transform: translate(-50%, 0);
+  }
+  
+  pre {
+    font-family: monospace;
+    border-left: 0.25em solid #aaa;
+    padding-left: 0.75em;
+    font-size: 0.9em;
+    line-height: 1.4em;
+  }
+  
+  code {
+    display:inline;
+    font-family: monospace;
+    background: #888;
+    border-radius: 0.7em;
+    padding: 0 0.5em 0.1em 0.5em;
+    font-size: 0.9em;
+    line-height: 1.4em;
+    display: inline;
+    top: -0.1em;
+    position: relative;
+    color: #fff;
   }`;
 
   return class {

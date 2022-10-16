@@ -1,22 +1,18 @@
 <!DOCTYPE html><html lang="en"><head><style>:where(body){all: unset;margin:0;overflow:hidden;}</style></head><body><script type="text/javascript">'use strict';
 globalThis.mdlr = (() => {
-
 const m = {
 names: /^(?:\[(?<t>[a-z]+)\])?(?<n>[-:a-z0-9]+)$/,
 modules: new Map,
 loader: new Map,
 checks: new Set,
-
 info: (name, type = 'unit') => {
 const [ , t, n ] = m.names.exec(name) ?? [];
 return { type:t??type, n:`[${t??type}]${n}` };
 },
-
 load: (info, context) => {
 return m.loader.get(info.type)(info, context);
 }
 }
-
 m.loader
 .set('unit', (info, context) => {
 const scope = new Modular(info, context);
@@ -32,7 +28,6 @@ return unit;
 })
 .set('mdlr', m.loader.get('unit'))
 .set('node', info => require(info.n.replace('[node]', '')));
-
 class Modular {
 constructor(info, context) {
 this.context = context ?? {};
@@ -41,20 +36,16 @@ if (info.type === 'mdlr') {
 this.$ = k => m[k];
 }
 }
-
 require(name, context) {
 if (this.context[name]) {
 return this.context[name];
 }
-
 const info = m.info(name);
 return m.load(info, context);
 }
 }
-
 return (name, context) => {
 const info = m.info(name);
-
 if (context && context.constructor === Function) {
 m.modules.set(info.n, context);
 }
@@ -62,10 +53,8 @@ else {
 return m.load(info, context);
 }
 }
-
 })()
 mdlr('[html]tutorial-firewatch', m => {
-
 m.html`
 <a href="https://www.firewatchgame.com">
 {#each layer in layers}
@@ -76,14 +65,12 @@ m.html`
 <span style="opacity:{opacity}">scroll down</span>
 <div>You have scrolled {y} pixels</div>
 </div>`;
-
 m.css`
 :root {
 all: unset;
 display: block;
 background-color: rgb(32,0,1);
 }
-
 a {
 position: fixed;
 width: 2400px;
@@ -91,13 +78,11 @@ height: 712px;
 left: 50%;
 transform: translate(-50%,0);
 }
-
 img {
 position: fixed;
 width: 100%;
 will-change: transform;
 }
-
 img:last-child::after {
 content: '';
 position: absolute;
@@ -105,7 +90,6 @@ width: 100%;
 height: 100%;
 background: rgb(45,10,13);
 }
-
 div {
 position: relative;
 width: 100%;
@@ -116,14 +100,12 @@ padding: 4em 0.5em 0.5em 0.5em;
 box-sizing: border-box;
 pointer-events: none;
 }
-
 span {
 display: block;
 font-size: 1em;
 text-transform: uppercase;
 will-change: transform, opacity;
 }
-
 div > div {
 position: absolute;
 top: 711px;
@@ -134,12 +116,10 @@ background-color: rgb(32,0,1);
 color: white;
 padding: 50vh 0 0 0;
 }`;
-
 return class {
 layers = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 opacity = 1.0;
 y = 0;
-
 connected() {
 document.body.style.overflow = "auto";
 document.addEventListener('scroll', e => {
@@ -149,46 +129,35 @@ m.render(this);
 });
 }
 }
-
 })
 mdlr('[mdlr]html-loader', _ => {
 const cache = new Map;
 const $cache = new Map;
-
 const { tokenizer } = _.require('html-tokenizer');
 const eachRegEx = /^(?<item>[a-zA-Z0-9-]+(,\s*[a-zA-Z0-9-]+)?) in (?<member>[^}]+)$/;
 const attrRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}:]*?)(:(?<h>[^}]*))?})?$/;
 const copyRegEx = /^\{(?<code>[^}]+)\}|(?<text>.*)$/;
-
 function defineElement(name, e, $) {
 customElements.define(name, class extends HTMLElement {
 #state = e.bind(new $);
-
 connectedCallback() {
 const s = this.#state;
-
 const record = { nodes: [], $root: this, e };
 $cache.set(s, record);
-
 e.create(s, record.nodes, record.$root);
-
 s.connected?.call(s, this);
 }
-
 disconnectedCallback() {
 const s = this.#state;
 e.delete(s);
 $cache.delete(s);
-
 s.disconnected?.call(s, this);
 }
-
 get $() {
 return this.#state;
 }
 });
 }
-
 function html(name, strings) {
 let create = 'let $i=0, $t=[]; $t[0] = $e[0] = $d.createDocumentFragment();\n';
 let update = 'let $i=0;\n';
@@ -199,9 +168,7 @@ let code;
 switch (type) {
 case 'open':
 const { n, e, h, d } = attrRegEx.exec(id).groups;
-
 const isHtmlModule = cache.has(n);
-
 const xmlns = (data.find(a => a.key === 'xmlns') ?? {}).value;
 create += `$e[++$i] = $d.createElementNS(${xmlns ? `'${xmlns}'` : '($t[0].namespaceURI ?? \'http://www.w3.org/1999/xhtml\')'}, '${n}');\n`;
 if (d) {
@@ -294,15 +261,12 @@ break;
 this.create = create;
 this.update = update;
 }
-
 function css(name, strings) {
 const block = /\s*(?<key>.+?)\s*\{(?<body>[^}]*)\}/g;
-
 let b, style = '';
 while (!!(b = block.exec(strings[0]))) {
 const { key, body } = b.groups;
 const keys = key.split(',').map(a => a.trim());
-
 keys.forEach(k => {
 if (k.indexOf(':root') === 0) {
 style += `${k.replace(':root', name)} {${body}}\n`;
@@ -317,33 +281,26 @@ e.id = name;
 e.textContent = style;
 document.head.append(e);
 }
-
 _.$('loader').set('html', (i, context) => {
 const name = i.n.replace('[html]', '');
 if (cache.has(name)) return;
-
 const config = {};
 const m = new _.constructor(i, context);
 m.html = html.bind(config);
 m.css = css.bind(config, name);
-
 const stateClass = _.$('modules').get(i.n)(m) ?? class { };
-
 const state = new stateClass;
 const names = Object.getOwnPropertyNames;
 const funcs = names(stateClass.prototype);
 const props = [...names(state), ...funcs].join(', ');
-
 const functor = new Function(`//${name}\nconst $d = document, $keys = new Set([${[...names(state)].map(a => `'${a}'`).join(',')}]); return {
 bind: $ => { ${funcs.map(f => `$.${f} = $.${f}.bind($);`).join('\n')}; return $; },
 create: ($, $e, $root) => {\nconst {${props}} = $\n${config.create}\$root.textContent='';\$root.append($e[0]);\n},
 update: ($, $e, $root) => {\nconst {${props}} = $;\n${config.update}},
 delete: () => {}
 }`);
-
 const e = functor();
 defineElement(name, e, stateClass);
-
 m.redraw = $ => {
 if (!$cache.has($)) return;
 const { nodes, $root, e } = $cache.get($);
@@ -358,32 +315,24 @@ m.redirect = path => {
 const { hash, href } = window.location;
 window.location.href = href.replace(hash, path);
 }
-
 cache.set(name, { stateClass, keys: [...names(state)] });
 window.cache = cache;
 })
 })
 mdlr('[unit]html-tokenizer', m => {
-
 const attributesRegEx = /(?<key>[a-zA-Z0-9\-]+)=(?:"(?<value1>(?:\\"|[^"\r\n])*)"|(?<value2>(?:\\"|[^\x20>\r\n])*))/g;
 const tagRegEx = /(?<space>[\s]+)(?=<|$|{)|\<\/(?<close>[^>]+)\>|\<(?<open>(?<tag>[a-z0-9-]+)({[^}]*})?)[^>]*\>|{(?<hint>[#:\/@][a-z]+)[\s]*(?<body>({[^}]*}|[^{}]*)*)}|(?<text>[^<]+)/g;
-
 function getAttributes(match) {
 return [...match.matchAll(attributesRegEx)].map(a => a.groups).map(a => ({ key: a.key, value: (a.value1 ?? a.value2) }));
 }
-
 function* tokenizer(html) {
 tagRegEx.lastIndex = 0;
-
 const $ = (id, type, data = null) => ({ id, type, data });
-
 let m;
 while (null != (m = tagRegEx.exec(html))) {
 const { space, close, open, tag, hint, body, text } = m.groups;
-
 if (open) {
 yield $(open, 'open', getAttributes(m[0]));
-
 if (m[0].endsWith('/>')) {
 yield $(open, 'close');
 }
@@ -402,9 +351,7 @@ yield $(hint, 'hint', body);
 }
 }
 }
-
 return { tokenizer };
-
 })
 mdlr('[mdlr]html-loader');
 mdlr('[html]tutorial-firewatch'); document.body.innerHTML = '<tutorial-firewatch></tutorial-firewatch>';</script></body></html>

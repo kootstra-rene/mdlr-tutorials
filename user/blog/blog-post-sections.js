@@ -19,6 +19,7 @@ mdlr('[html]blog-post-sections', m => {
     height: 100%;
     overflow-y: auto;
     display: block;
+    box-shadow: 0 0 black;
   }`;
 
   return class {

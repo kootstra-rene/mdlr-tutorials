@@ -1,6 +1,6 @@
 mdlr('[html]blog-post-title', m => {
 
-  m.html`<div>{title}</div>`
+  m.html`<div>{title}</div>`;
 
   m.css`
   :root {
@@ -8,11 +8,16 @@ mdlr('[html]blog-post-title', m => {
     white-space: nowrap;
     font-size: 2em;
     text-align: center;
-    color: #111;
-    background-color: #eee;
+    background-color: #555;
     font-weight: bold;
+    font-spacing:0.1em;
+    box-shadow: inset 0 0px 50px #333;
   }
-  `
+  
+  div {
+    color: #ffffffe0;
+    text-shadow: 1px 2px 4px #000, 0 0 0 #000, 1px 2px 4px #555;
+  }`;
 
   return class {
     title = null;
