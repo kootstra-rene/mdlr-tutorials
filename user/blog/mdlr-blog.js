@@ -10,7 +10,7 @@ mdlr('[unit]markdown', m => {
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
-  const codeRegEx = /(`{3,3})((?:[^`]+?|`)*?)(`{3,3})|(?:`([^`]+)`)/mg;
+  const codeRegEx = /((?:\\?)`{3,3})((?:[^`]+?|`)*?)(`{3,3})|((?:\\?)`([^`]+)`)/mg;
 
   const emphasis = { otag: ['<i>', '<b>', '<b><i>'], etag: ['</i>', '</b>', '</i></b>'] };
   const strike = { otag: ['<u>', '<s>'], etag: ['</u>', '</s>'] };
@@ -34,12 +34,17 @@ mdlr('[unit]markdown', m => {
     return `${script.otag[type]}${p2}${script.etag[type]}`;
   }
 
+  function escape(t) {
+    return t.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')
+  }
   function codeReplacer(match, p1, p2, p3, p4) {
+    console.log({p1, p2, p3, p4}, match);
     if (p4?.length) {
+      if (p4[0] === '\\') return match.slice(1);
       return `<code>${p4}</code>`;
     }
-    if (p1?.length !== p3?.length) return match;
-    return `<pre>${p2.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')}</pre>`;
+    if (p1[0] === '\\') return escape(match.slice(1));
+    return `<pre>${escape(p2)}</pre>`;
   }
 
   function linebreakReplacer(match) {
@@ -169,12 +174,6 @@ mdlr('[html]mdlr-blog', m => {
     post = null;
     // options = null;
 
-    constructor() {
-      // this.router(window.location.href);
-      // if (!window.location.hash != this.hash) window.location = this.hash;
-
-    }
-
     async connected() {
       const meta = document.createElement('meta');
       meta.name = m.name;
@@ -218,7 +217,7 @@ mdlr('[html]mdlr-blog', m => {
       if (this.hash.startsWith('#/post/')) {
         // search based on slug...
         const slug = this.hash.replace('#/', '');
-        this.post = this.blog.find(post => post.meta.slug === slug);;
+        this.post = this.blog.find(post => post.meta.slug === slug);
         if (!this.post) this.hash = '#/';
       }
     }

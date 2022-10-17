@@ -13,7 +13,7 @@
     },
     "sections": [
       {
-        "text": "The following sections describe how to use code-clocks: ```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})``` Sometimes `docker-compose pull` is useful."
+        "text": "The following sections describe how to use code-clocks: \\```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})``` => ```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})``` Sometimes \\`docker-compose pull` => `docker-compose pull` is useful."
       }
     ]
   },
