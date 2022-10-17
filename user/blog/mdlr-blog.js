@@ -66,7 +66,7 @@ mdlr('[unit]markdown', m => {
 
     if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
     if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" ${p3 || ''}></iframe>`;
-    return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts" ${p3 || ''}></iframe>`;
+    return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts allow-same-origin" ${p3 || ''}></iframe>`;
   }
 
   function md(strings, ...values) {

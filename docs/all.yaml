@@ -13,6 +13,18 @@
       \\```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})``` => ```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})```
       Sometimes \\`docker-compose pull` => `docker-compose pull` is useful."
 
+- title: "Youtube the go"
+  tldr: "How to use video in mdlr-md..."
+  meta:
+    slug: "post/youtube"
+    publishdate: "20221017"
+    lastupdate: []
+    author: "---"
+    tags: ["video", "youtube"]
+  sections:
+  - text: 
+      "![in-shadow](https://www.youtube.com/embed/j800SVeiS5I)"
+
 - title: "The posibilities are endless"
   tldr: "tl;dr - use mdlr"
   meta:

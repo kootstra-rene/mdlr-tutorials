@@ -18,6 +18,25 @@
     ]
   },
   {
+    "title": "Youtube the go",
+    "tldr": "How to use video in mdlr-md...",
+    "meta": {
+      "slug": "post/youtube",
+      "publishdate": "20221017",
+      "lastupdate": [],
+      "author": "---",
+      "tags": [
+        "video",
+        "youtube"
+      ]
+    },
+    "sections": [
+      {
+        "text": "![in-shadow](https://www.youtube.com/embed/j800SVeiS5I|style=\"aspect-ratio:16/9;width:100%;height:auto;\")"
+      }
+    ]
+  },
+  {
     "title": "The posibilities are endless",
     "tldr": "tl;dr - use mdlr",
     "meta": {
