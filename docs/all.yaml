@@ -23,7 +23,19 @@
     tags: ["video", "youtube"]
   sections:
   - text: 
-      "![in-shadow](https://www.youtube.com/embed/j800SVeiS5I)"
+      "Using the following \\![in-shadow](https://www.youtube.com/embed/j800SVeiS5I|style=\"aspect-ratio:16/9;width:100%;height:auto;\") results in    \n![in-shadow](https://www.youtube.com/embed/j800SVeiS5I|style=\"aspect-ratio:16/9;width:100%;height:auto;\")"
+
+- title: "Expecting Professionalism"
+  tldr: "Uncle Bob about software development..."
+  meta:
+    slug: "post/expecting-professionalism"
+    publishdate: "20221017"
+    lastupdate: []
+    author: "---"
+    tags: ["uncle bob", "software"]
+  sections:
+  - text: 
+      "![Expecting Professionalism](https://youtube.com/embed/BSaAMQVq01E?t=1372|style=\"aspect-ratio:16/9;width:100%;height:auto;\")"
 
 - title: "The posibilities are endless"
   tldr: "tl;dr - use mdlr"

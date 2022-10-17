@@ -5,8 +5,8 @@ mdlr('[unit]markdown', m => {
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
   const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
-  const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
-  const inlineReqEx = /!\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
+  // const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
+  const inlineReqEx = /(\\?)(!?)\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
@@ -39,8 +39,9 @@ mdlr('[unit]markdown', m => {
   }
   function codeReplacer(match, p1, p2, p3, p4) {
     if (p4?.length) {
+      console.log(p4);
       if (p4[0] === '\\') return match.slice(1);
-      return `<code>${p4}</code>`;
+      return `<code>${p4.slice(1, p4.length - 1)}</code>`;
     }
     if (p1[0] === '\\') return escape(match.slice(1));
     return `<pre>${escape(p2)}</pre>`;
@@ -55,18 +56,15 @@ mdlr('[unit]markdown', m => {
     return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
   }
 
-  function linkReplacer(match, p1, p2) {
-    return `<a href="${p2}">${p1}</a>`;
-  }
+  function inlineReplacer(match, ...args) {
+    let [esc, show, name, href, props] = args;
+    href = href.replace('$www/', $www);
+    if (!show) return `<a href="${href}">${name}</a>`;
 
-  function inlineReplacer(match, p1, p2, p3) {
-    if (p2.startsWith('$www/')) {
-      p2 = p2.replace('$www/', $www);
-    }
-
-    if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
-    if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" ${p3 || ''}></iframe>`;
-    return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts allow-same-origin" ${p3 || ''}></iframe>`;
+    if (esc) return `\`${match.slice(1)}\``;
+    if (href.endsWith('.png')) return `<img alt="${name}" src="${href}" ${props || ''}/>`;
+    if (href.startsWith('mdlr:')) return `<iframe title="${name}" src="${href.replace('mdlr:', 'https:')}" ${props || ''}></iframe>`;
+    return `<iframe title="${name}" src="${href}" sandbox="allow-scripts allow-same-origin" ${props || ''}></iframe>`;
   }
 
   function md(strings, ...values) {
@@ -77,7 +75,6 @@ mdlr('[unit]markdown', m => {
       .replace(emphasisRegEx, emphasisReplacer)
       .replace(strikeRegEx, strikeReplacer)
       .replace(scriptRegEx, scriptReplacer)
-      .replace(linkReqEx, linkReplacer)
       .replace(codeRegEx, codeReplacer)
       .replace(linebreakReqEx, linebreakReplacer)
       .replace(whiteSpaceRegEx, '')
