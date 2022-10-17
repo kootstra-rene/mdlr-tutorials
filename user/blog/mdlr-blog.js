@@ -38,7 +38,6 @@ mdlr('[unit]markdown', m => {
     return t.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')
   }
   function codeReplacer(match, p1, p2, p3, p4) {
-    console.log({p1, p2, p3, p4}, match);
     if (p4?.length) {
       if (p4[0] === '\\') return match.slice(1);
       return `<code>${p4}</code>`;
