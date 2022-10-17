@@ -126,13 +126,13 @@ mdlr('[html]mdlr-blog', m => {
   m.require('[html]blog-post');
 
   m.html`
-  <header>header</header>
+  <header><img src="${$www}resources/mdlr.svg"/></header>
   {#if hash === '#/'}
     <blog-overview{=} />
   {:else}
     <blog-post{=post} />
   {/if}
-  <footer>footer</footer>`
+  <footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$www}resources/github.png" /></a></footer>`
 
   m.css`
   :root {
@@ -157,11 +157,23 @@ mdlr('[html]mdlr-blog', m => {
     text-align: center;
     line-height: 3vh;
     height: 3vh;
+    overflow: hidden;
+  }
+  header > img {
+    position:relative;
+    top: -0.75em;
+    height:4em;
+  }
+
+  footer {
+    line-height: 1.6em;
+    height:1.6em;
   }
   
-  footer {
-    line-height: 2vh;
-    height:2vh;
+  footer > a > img {
+    position:relative;
+    top: 0.2em;
+    height:1.2em;
   }`;
 
   return class {

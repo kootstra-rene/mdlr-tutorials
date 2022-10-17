@@ -59,13 +59,13 @@ const { $www } = m.require('www-root');
 m.require('[html]blog-overview');
 m.require('[html]blog-post');
 m.html`
-<header>header</header>
+<header><img src="${$www}resources/mdlr.svg"/></header>
 {#if hash === '#/'}
 <blog-overview{=} />
 {:else}
 <blog-post{=post} />
 {/if}
-<footer>footer</footer>`
+<footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$www}resources/github.png" /></a></footer>`
 m.css`
 :root {
 display:flex;
@@ -89,10 +89,21 @@ flex: none;
 text-align: center;
 line-height: 3vh;
 height: 3vh;
+overflow: hidden;
+}
+header > img {
+position:relative;
+top: -0.75em;
+height:4em;
 }
 footer {
-line-height: 2vh;
-height:2vh;
+line-height: 1.6em;
+height:1.6em;
+}
+footer > a > img {
+position:relative;
+top: 0.2em;
+height:1.2em;
 }`;
 return class {
 hash = '#/';
@@ -172,7 +183,7 @@ border-top: 0;
 }`;
 return class {
 blog = null;
-title = 'MDLR Tutorials';
+title = 'The official blog';
 }
 })
 mdlr('[html]blog-post', m => {
@@ -228,12 +239,13 @@ return this.#state;
 }
 });
 }
-function html(name, strings) {
+function html(strings, ...values) {
 let create = 'let $i=0, $t=[]; $t[0] = $e[0] = $d.createDocumentFragment();\n';
 let update = 'let $i=0;\n';
 let hs = [];
 const add = (c, u = true) => { create += c; if (u) update += c; }
-for (let { id, type, data } of tokenizer(name[0])) {
+const markup = String.raw({ raw: strings }, ...values)
+for (let { id, type, data } of tokenizer(markup)) {
 let code;
 switch (type) {
 case 'open':
@@ -331,10 +343,11 @@ break;
 this.create = create;
 this.update = update;
 }
-function css(name, strings) {
+function css(name, strings, ...values) {
+const markup = String.raw({ raw: strings }, ...values)
 const block = /\s*(?<key>.+?)\s*\{(?<body>[^}]*)\}/g;
 let b, style = '';
-while (!!(b = block.exec(strings[0]))) {
+while (!!(b = block.exec(markup))) {
 const { key, body } = b.groups;
 const keys = key.split(',').map(a => a.trim());
 keys.forEach(k => {
@@ -563,8 +576,8 @@ tldr = null;
 mdlr('[html]blog-post-section-text', m => {
 const { md } = m.require('markdown');
 m.html`
-{#if caption}{@html markdownCaption()}{/if}
-{@html markdownText()}`;
+{#if caption}{@html md([caption])}{/if}
+{@html md([text])}`;
 m.css`
 :root {
 display: inline-block;
@@ -577,7 +590,7 @@ padding: 0 1em;
 s {
 text-decoration: underline;
 text-underline-offset: -.25em;
-text-decoration-skip-ink: none;    
+text-decoration-skip-ink: none;
 }
 sup, sub {
 line-height: 0;
@@ -628,23 +641,18 @@ position: relative;
 color: #fff;
 }`;
 return class {
+md = md;
 text = null;
 caption = null;
-markdownCaption() {
-return md`${this.caption}`;
 }
-markdownText() {
-return md`${this.text}`;
-}
-} 
 })
 mdlr('[unit]markdown', m => {
 const { $www } = m.require('www-root');
 const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
 const linebreakReqEx = /\u0020{2,4}\n/mg;
 const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
-const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
-const inlineReqEx = /!\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
+// const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
+const inlineReqEx = /(\\?)(!?)\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
 const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
 const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
 const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
@@ -672,8 +680,9 @@ return t.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')
 }
 function codeReplacer(match, p1, p2, p3, p4) {
 if (p4?.length) {
+console.log(p4);
 if (p4[0] === '\\') return match.slice(1);
-return `<code>${p4}</code>`;
+return `<code>${p4.slice(1, p4.length - 1)}</code>`;
 }
 if (p1[0] === '\\') return escape(match.slice(1));
 return `<pre>${escape(p2)}</pre>`;
@@ -685,16 +694,14 @@ return '<br>'.repeat(breaks);
 function headingReplacer(match, p1, p2) {
 return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
 }
-function linkReplacer(match, p1, p2) {
-return `<a href="${p2}">${p1}</a>`;
-}
-function inlineReplacer(match, p1, p2, p3) {
-if (p2.startsWith('$www/')) {
-p2 = p2.replace('$www/', $www);
-}
-if (p2.endsWith('.png')) return `<img alt="${p1}" src="${p2}" ${p3 || ''}/>`;
-if (p2.startsWith('mdlr:')) return `<iframe id="${p1}" src="${p2.replace('mdlr:', 'https:')}" ${p3 || ''}></iframe>`;
-return `<iframe title="${p1}" src="${p2}" sandbox="allow-scripts allow-same-origin" ${p3 || ''}></iframe>`;
+function inlineReplacer(match, ...args) {
+let [esc, show, name, href, props] = args;
+href = href.replace('$www/', $www);
+if (!show) return `<a href="${href}">${name}</a>`;
+if (esc) return `\`${match.slice(1)}\``;
+if (href.endsWith('.png')) return `<img alt="${name}" src="${href}" ${props || ''}/>`;
+if (href.startsWith('mdlr:')) return `<iframe title="${name}" src="${href.replace('mdlr:', 'https:')}" ${props || ''}></iframe>`;
+return `<iframe title="${name}" src="${href}" sandbox="allow-scripts allow-same-origin" ${props || ''}></iframe>`;
 }
 function md(strings, ...values) {
 return String
@@ -704,7 +711,6 @@ return String
 .replace(emphasisRegEx, emphasisReplacer)
 .replace(strikeRegEx, strikeReplacer)
 .replace(scriptRegEx, scriptReplacer)
-.replace(linkReqEx, linkReplacer)
 .replace(codeRegEx, codeReplacer)
 .replace(linebreakReqEx, linebreakReplacer)
 .replace(whiteSpaceRegEx, '')

@@ -154,12 +154,13 @@ return this.#state;
 }
 });
 }
-function html(name, strings) {
+function html(strings, ...values) {
 let create = 'let $i=0, $t=[]; $t[0] = $e[0] = $d.createDocumentFragment();\n';
 let update = 'let $i=0;\n';
 let hs = [];
 const add = (c, u = true) => { create += c; if (u) update += c; }
-for (let { id, type, data } of tokenizer(name[0])) {
+const markup = String.raw({ raw: strings }, ...values)
+for (let { id, type, data } of tokenizer(markup)) {
 let code;
 switch (type) {
 case 'open':
@@ -257,10 +258,11 @@ break;
 this.create = create;
 this.update = update;
 }
-function css(name, strings) {
+function css(name, strings, ...values) {
+const markup = String.raw({ raw: strings }, ...values)
 const block = /\s*(?<key>.+?)\s*\{(?<body>[^}]*)\}/g;
 let b, style = '';
-while (!!(b = block.exec(strings[0]))) {
+while (!!(b = block.exec(markup))) {
 const { key, body } = b.groups;
 const keys = key.split(',').map(a => a.trim());
 keys.forEach(k => {

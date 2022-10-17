@@ -33,7 +33,7 @@ mdlr('[html]blog-overview', m => {
 
   return class {
     blog = null;
-    title = 'MDLR Tutorials';
+    title = 'The official blog';
   }
 
 })

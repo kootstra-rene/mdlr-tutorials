@@ -3,8 +3,8 @@ mdlr('[html]blog-post-section-text', m => {
   const { md } = m.require('markdown');
 
   m.html`
-  {#if caption}{@html markdownCaption()}{/if}
-  {@html markdownText()}`;
+  {#if caption}{@html md([caption])}{/if}
+  {@html md([text])}`;
 
   m.css`
   :root {
@@ -19,7 +19,7 @@ mdlr('[html]blog-post-section-text', m => {
   s {
     text-decoration: underline;
     text-underline-offset: -.25em;
-    text-decoration-skip-ink: none;    
+    text-decoration-skip-ink: none;
   }
 
   sup, sub {
@@ -79,15 +79,9 @@ mdlr('[html]blog-post-section-text', m => {
   }`;
 
   return class {
+    md = md;
     text = null;
     caption = null;
-
-    markdownCaption() {
-      return md`${this.caption}`;
-    }
-    markdownText() {
-      return md`${this.text}`;
-    }
-  } 
+  }
 
 })
