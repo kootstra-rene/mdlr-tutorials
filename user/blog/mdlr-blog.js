@@ -85,9 +85,12 @@ mdlr('[unit]markdown', m => {
 
 mdlr('[unit]www-root', m => {
 
-  const $www = window.location.pathname === '/bundler/html' ? `${window.location.origin}/docs/` : window.location.href.split('#')[0];
+  const loc = window.location;
 
-  return { $www };
+  const $www = loc.pathname === '/bundler/html' ? `${loc.origin}/docs/` : loc.href.split('#')[0];
+  const $root = loc.href.replace(loc.hash, '');
+
+  return { $www, $root };
 
 })
 
@@ -120,13 +123,13 @@ mdlr('[html]router-link', m => {
 
 mdlr('[html]mdlr-blog', m => {
 
-  const { $www } = m.require('www-root');
+  const { $www, $root } = m.require('www-root');
 
   m.require('[html]blog-overview');
   m.require('[html]blog-post');
 
   m.html`
-  <header><img src="${$www}resources/mdlr.svg"/></header>
+  <header><a href="${$root}"><img src="${$www}resources/mdlr.svg"/></a></header>
   {#if hash === '#/'}
     <blog-overview{=} />
   {:else}
@@ -159,7 +162,7 @@ mdlr('[html]mdlr-blog', m => {
     height: 3vh;
     overflow: hidden;
   }
-  header > img {
+  header > a > img {
     position:relative;
     top: -0.75em;
     height:4em;
@@ -198,6 +201,7 @@ mdlr('[html]mdlr-blog', m => {
       `;
 
       this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
+
       this.router(window.location.href);
       if (!window.location.hash != this.hash) window.location = this.hash;
 

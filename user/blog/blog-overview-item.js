@@ -4,7 +4,7 @@ mdlr('[html]blog-overview-item', m => {
 
   m.html`
   <h1>{title}</h1><h2>{tldr}</h2>
-  <router-link href={href()} text="more..."/>
+  <router-link href={'#/'+meta.slug} text="more..."/>
   {#each tag in meta.tags}<li>{tag}</li>{/each}`;
 
   m.css`
@@ -55,11 +55,6 @@ mdlr('[html]blog-overview-item', m => {
     title = null;
     tldr = null;
     meta = null;
-
-    href() {
-      return `#/${this.meta?.slug}`;
-    }
-
   }
 
 })

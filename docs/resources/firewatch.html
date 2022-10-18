@@ -199,7 +199,7 @@ code = `$e[$i].$.${k} = \'${g.text}\';\n`;
 }
 if (g.code) {
 const rk = (g.code || k)?.split('.')[0];
-code = `$e[$i].$.${k} = $keys.has('${rk}') ? $.${g.code || k} : ${g.code || k};\n`;
+code = `$e[$i].$.${k} = ${g.code || k};\n`;
 }
 }
 else {

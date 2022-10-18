@@ -55,11 +55,11 @@ return m.load(info, context);
 }
 })()
 mdlr('[html]mdlr-blog', m => {
-const { $www } = m.require('www-root');
+const { $www, $root } = m.require('www-root');
 m.require('[html]blog-overview');
 m.require('[html]blog-post');
 m.html`
-<header><img src="${$www}resources/mdlr.svg"/></header>
+<header><a href="${$root}"><img src="${$www}resources/mdlr.svg"/></a></header>
 {#if hash === '#/'}
 <blog-overview{=} />
 {:else}
@@ -91,7 +91,7 @@ line-height: 3vh;
 height: 3vh;
 overflow: hidden;
 }
-header > img {
+header > a > img {
 position:relative;
 top: -0.75em;
 height:4em;
@@ -152,8 +152,10 @@ if (!this.post) this.hash = '#/';
 }
 })
 mdlr('[unit]www-root', m => {
-const $www = window.location.pathname === '/bundler/html' ? `${window.location.origin}/docs/` : window.location.href.split('#')[0];
-return { $www };
+const loc = window.location;
+const $www = loc.pathname === '/bundler/html' ? `${loc.origin}/docs/` : loc.href.split('#')[0];
+const $root = loc.href.replace(loc.hash, '');
+return { $www, $root };
 })
 mdlr('[html]blog-overview', m => {
 m.require('[html]blog-post-title');
@@ -280,7 +282,7 @@ code = `$e[$i].$.${k} = \'${g.text}\';\n`;
 }
 if (g.code) {
 const rk = (g.code || k)?.split('.')[0];
-code = `$e[$i].$.${k} = $keys.has('${rk}') ? $.${g.code || k} : ${g.code || k};\n`;
+code = `$e[$i].$.${k} = ${g.code || k};\n`;
 }
 }
 else {
@@ -427,7 +429,7 @@ mdlr('[html]blog-overview-item', m => {
 m.require('[html]router-link');
 m.html`
 <h1>{title}</h1><h2>{tldr}</h2>
-<router-link href={href()} text="more..."/>
+<router-link href={'#/'+meta.slug} text="more..."/>
 {#each tag in meta.tags}<li>{tag}</li>{/each}`;
 m.css`
 :root {
@@ -472,9 +474,6 @@ return class {
 title = null;
 tldr = null;
 meta = null;
-href() {
-return `#/${this.meta?.slug}`;
-}
 }
 })
 mdlr('[html]blog-post-sections', m => {

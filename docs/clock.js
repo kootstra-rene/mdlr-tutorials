@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><style>:where(body){all: unset;margin:0;overflow:hidden;}</style></head><body><script type="text/javascript">'use strict';
+'use strict';
 globalThis.mdlr = (() => {
 const m = {
 names: /^(?:\[(?<t>[a-z]+)\])?(?<n>[-:a-z0-9]+)$/,
@@ -352,4 +352,4 @@ yield $(hint, 'hint', body);
 return { tokenizer };
 })
 mdlr('[mdlr]html-loader');
-mdlr('[html]tutorial-svg-clock'); document.body.innerHTML = '<tutorial-svg-clock></tutorial-svg-clock>';</script></body></html>
+mdlr('[html]tutorial-svg-clock'); document.body.innerHTML = '<tutorial-svg-clock></tutorial-svg-clock>';
