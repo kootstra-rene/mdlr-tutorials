@@ -88,7 +88,7 @@ mdlr('[unit]www-root', m => {
 
   let $raw = `${loc.origin}/docs/`;
   if (-1 !== loc.href.indexOf('github')) {
-    $raw = "https://raw.githubusercontent.com/kootstra-rene/mdlr-tutorials/main/docs";;
+    $raw = "https://raw.githubusercontent.com/kootstra-rene/mdlr-tutorials/main/docs/";
   }
 
   const $root = loc.href.replace(loc.hash, '');
