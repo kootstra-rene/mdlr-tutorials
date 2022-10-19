@@ -1,6 +1,6 @@
 mdlr('[html]blog-post-tldr', m => {
 
-  m.html`<div>{tldr}</div>`;
+  m.html`<div>{post?.tldr ?? ''}</div>`;
 
   m.css`
   :root {
@@ -15,7 +15,7 @@ mdlr('[html]blog-post-tldr', m => {
   }`;
 
   return class {
-    tldr = null;
+    post = null;
   } 
 
 })

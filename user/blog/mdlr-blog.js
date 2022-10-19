@@ -58,7 +58,7 @@ mdlr('[unit]markdown', m => {
 
   function inlineReplacer(match, ...args) {
     let [esc, show, name, href, props] = args;
-    href = href.replace('$www/', $www);
+    href = href.replace('#/', $www);
     if (!show) return `<a href="${href}">${name}</a>`;
 
     if (esc) return `\`${match.slice(1)}\``;
@@ -226,10 +226,11 @@ mdlr('[html]mdlr-blog', m => {
 
       this.hash = hash || '#/';
 
-      if (this.hash.startsWith('#/post/')) {
+      if (this.hash.startsWith('#/posts/')) {
         // search based on slug...
+        console.log(this.hash);
         const slug = this.hash.replace('#/', '');
-        this.post = this.blog.find(post => post.meta.slug === slug);
+        this.post = this.blog.find(post => post.slug === slug);
         if (!this.post) this.hash = '#/';
       }
     }

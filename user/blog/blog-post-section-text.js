@@ -2,9 +2,7 @@ mdlr('[html]blog-post-section-text', m => {
 
   const { md } = m.require('markdown');
 
-  m.html`
-  {#if caption}{@html md([caption])}{/if}
-  {@html md([text])}`;
+  m.html`{@html md([post?.body ?? '...'])}`;
 
   m.css`
   :root {
@@ -80,8 +78,7 @@ mdlr('[html]blog-post-section-text', m => {
 
   return class {
     md = md;
-    text = null;
-    caption = null;
+    post = null;
   }
 
 })

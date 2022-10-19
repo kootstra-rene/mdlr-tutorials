@@ -4,8 +4,8 @@ mdlr('[html]blog-overview-item', m => {
 
   m.html`
   <h1>{title}</h1><h2>{tldr}</h2>
-  <router-link href={'#/'+meta.slug} text="more..."/>
-  {#each tag in meta.tags}<li>{tag}</li>{/each}`;
+  <router-link href={'#/'+slug} text="more..."/>
+  {#each tag in tags}<li>{tag}</li>{/each}`;
 
   m.css`
   :root {
@@ -54,7 +54,8 @@ mdlr('[html]blog-overview-item', m => {
   return class {
     title = null;
     tldr = null;
-    meta = null;
+    slug = null;
+    tags = null;
   }
 
 })

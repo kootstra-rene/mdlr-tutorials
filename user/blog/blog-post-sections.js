@@ -5,9 +5,7 @@ mdlr('[html]blog-post-sections', m => {
 
   m.html`
   <blog-post-tldr{=} />
-  {#each section in sections}
-    <blog-post-section-text{=section} />
-  {/each}`
+  <blog-post-section-text{=} />`;
 
   m.css`
   * {
@@ -23,8 +21,7 @@ mdlr('[html]blog-post-sections', m => {
   }`;
 
   return class {
-    tldr = null;
-    sections = null;
+    post = null;
   } 
 
 })

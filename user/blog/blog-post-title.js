@@ -1,6 +1,6 @@
 mdlr('[html]blog-post-title', m => {
 
-  m.html`<div>{title}</div>`;
+  m.html`<div>{title ?? ''}</div>`;
 
   m.css`
   :root {
