@@ -142,10 +142,11 @@ const [hash, search] = url.hash.split('?');
 //   return a;
 // }, {});
 this.hash = hash || '#/';
-if (this.hash.startsWith('#/post/')) {
+if (this.hash.startsWith('#/posts/')) {
 // search based on slug...
+console.log(this.hash);
 const slug = this.hash.replace('#/', '');
-this.post = this.blog.find(post => post.meta.slug === slug);
+this.post = this.blog.find(post => post.slug === slug);
 if (!this.post) this.hash = '#/';
 }
 }
@@ -189,10 +190,11 @@ title = 'The official blog';
 }
 })
 mdlr('[html]blog-post', m => {
+const { $www } = m.require('www-root');
 m.require('[html]blog-post-title');
 m.require('[html]blog-post-sections');
 m.html`
-<blog-post-title{=} />
+<blog-post-title title={post?.title} />
 <blog-post-sections{=} />`
 m.css`
 :root {
@@ -207,10 +209,22 @@ flex: none;
 blog-post-sections {
 flex: 1;
 }`;
+const contentRegEx = /-{3}\n(?<head>.*)-{3}\s*(?<body>[^$]*)/s;
+function postToJson({ head, body }, slug) {
+const meta = head.split(/\n/g).filter(a => a).map(a => a.split(/\s*:\s*/g)).reduce((a, [k, v]) => { a[k] = JSON.parse(v); return a; }, {});
+return Object.assign({ slug }, meta, { body })
+}
 return class {
-title = null;
-tldr = null;
-sections = null;
+slug = null;
+post = null;
+async connected() {
+const content = await fetch(`${$www}/${this.slug}`).then(r => r.text());
+this.post = this.#contentToJson(content);
+m.redraw(this);
+}
+#contentToJson(content) {
+return postToJson(contentRegEx.exec(content).groups);
+}
 }
 })
 mdlr('[mdlr]html-loader', _ => {
@@ -405,7 +419,7 @@ window.cache = cache;
 })
 })
 mdlr('[html]blog-post-title', m => {
-m.html`<div>{title}</div>`;
+m.html`<div>{title ?? ''}</div>`;
 m.css`
 :root {
 display: block;
@@ -429,8 +443,8 @@ mdlr('[html]blog-overview-item', m => {
 m.require('[html]router-link');
 m.html`
 <h1>{title}</h1><h2>{tldr}</h2>
-<router-link href={'#/'+meta.slug} text="more..."/>
-{#each tag in meta.tags}<li>{tag}</li>{/each}`;
+<router-link href={'#/'+slug} text="more..."/>
+{#each tag in tags}<li>{tag}</li>{/each}`;
 m.css`
 :root {
 display: block;
@@ -473,7 +487,8 @@ font-size: 0.8em;
 return class {
 title = null;
 tldr = null;
-meta = null;
+slug = null;
+tags = null;
 }
 })
 mdlr('[html]blog-post-sections', m => {
@@ -481,9 +496,7 @@ m.require('[html]blog-post-tldr');
 m.require('[html]blog-post-section-text');
 m.html`
 <blog-post-tldr{=} />
-{#each section in sections}
-<blog-post-section-text{=section} />
-{/each}`
+<blog-post-section-text{=} />`;
 m.css`
 * {
 box-sizing: border-box;
@@ -497,8 +510,7 @@ display: block;
 box-shadow: 0 0 black;
 }`;
 return class {
-tldr = null;
-sections = null;
+post = null;
 } 
 })
 mdlr('[unit]html-tokenizer', m => {
@@ -556,7 +568,7 @@ m.redirect(this.href);
 }
 })
 mdlr('[html]blog-post-tldr', m => {
-m.html`<div>{tldr}</div>`;
+m.html`<div>{post?.tldr ?? ''}</div>`;
 m.css`
 :root {
 display: block;
@@ -569,14 +581,12 @@ font-weight: unset;
 font-size: 1.1em;
 }`;
 return class {
-tldr = null;
+post = null;
 } 
 })
 mdlr('[html]blog-post-section-text', m => {
 const { md } = m.require('markdown');
-m.html`
-{#if caption}{@html md([caption])}{/if}
-{@html md([text])}`;
+m.html`{@html md([post?.body ?? '...'])}`;
 m.css`
 :root {
 display: inline-block;
@@ -641,8 +651,7 @@ color: #fff;
 }`;
 return class {
 md = md;
-text = null;
-caption = null;
+post = null;
 }
 })
 mdlr('[unit]markdown', m => {
@@ -695,7 +704,7 @@ return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
 }
 function inlineReplacer(match, ...args) {
 let [esc, show, name, href, props] = args;
-href = href.replace('$www/', $www);
+href = href.replace('#/', $www);
 if (!show) return `<a href="${href}">${name}</a>`;
 if (esc) return `\`${match.slice(1)}\``;
 if (href.endsWith('.png')) return `<img alt="${name}" src="${href}" ${props || ''}/>`;
