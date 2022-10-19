@@ -3,9 +3,7 @@ mdlr('[html]blog-post-sections', m => {
   m.require('[html]blog-post-tldr');
   m.require('[html]blog-post-section-text');
 
-  m.html`
-  <blog-post-tldr{=} /><span>edit</span>
-  <blog-post-section-text{=} />`;
+  m.html`<blog-post-tldr{=} /><blog-post-section-text{=} />`;
 
   m.css`
   * {
