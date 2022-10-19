@@ -1,11 +1,10 @@
 mdlr('[unit]markdown', m => {
 
-  const { $www } = m.require('www-root');
+  const { $raw } = m.require('www-root');
 
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
   const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
-  // const linkReqEx = /\[([^\]]*)\]\(([^\)]*)\)/g;
   const inlineReqEx = /(\\?)(!?)\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
@@ -35,7 +34,7 @@ mdlr('[unit]markdown', m => {
   }
 
   function escape(t) {
-    return t.replace(/</g,'&lt;').replace(/\u0020/g, '&nbsp;')
+    return t.replace(/</g, '&lt;').replace(/\u0020/g, '&nbsp;')
   }
   function codeReplacer(match, p1, p2, p3, p4) {
     if (p4?.length) {
@@ -58,7 +57,7 @@ mdlr('[unit]markdown', m => {
 
   function inlineReplacer(match, ...args) {
     let [esc, show, name, href, props] = args;
-    href = href.replace('#/', $www);
+    href = href.replace('#/', $raw);
     if (!show) return `<a href="${href}">${name}</a>`;
 
     if (esc) return `\`${match.slice(1)}\``;
@@ -87,10 +86,14 @@ mdlr('[unit]www-root', m => {
 
   const loc = window.location;
 
-  const $www = loc.pathname === '/bundler/html' ? `${loc.origin}/docs/` : loc.href.split('#')[0];
+  let $raw = `${loc.origin}/docs/`;
+  if (-1 !== loc.href.indexOf('github')) {
+    $raw = "https://raw.githubusercontent.com/kootstra-rene/mdlr-tutorials/main/docs";;
+  }
+
   const $root = loc.href.replace(loc.hash, '');
 
-  return { $www, $root };
+  return { $root, $raw };
 
 })
 
@@ -123,19 +126,19 @@ mdlr('[html]router-link', m => {
 
 mdlr('[html]mdlr-blog', m => {
 
-  const { $www, $root } = m.require('www-root');
+  const { $root, $raw } = m.require('www-root');
 
   m.require('[html]blog-overview');
   m.require('[html]blog-post');
 
   m.html`
-  <header><a href="${$root}"><img src="${$www}resources/mdlr.svg"/></a></header>
+  <header><a href="${$root}"><img src="${$raw}resources/mdlr.svg"/></a></header>
   {#if hash === '#/'}
     <blog-overview{=} />
   {:else}
     <blog-post{=post} />
   {/if}
-  <footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$www}resources/github.png" /></a></footer>`
+  <footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$raw}resources/github.png" /></a></footer>`
 
   m.css`
   :root {
@@ -200,7 +203,7 @@ mdlr('[html]mdlr-blog', m => {
         background-color:#666;
       `;
 
-      this.blog = await fetch(`${$www}all.json`).then(r => r.json());
+      this.blog = await fetch(`${$raw}all.json`).then(r => r.json());
 
       this.router(window.location.href);
       if (!window.location.hash != this.hash) window.location = this.hash;

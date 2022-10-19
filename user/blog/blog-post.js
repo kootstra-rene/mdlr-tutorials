@@ -1,6 +1,6 @@
 mdlr('[html]blog-post', m => {
 
-  const { $www } = m.require('www-root');
+  const { $raw } = m.require('www-root');
 
   m.require('[html]blog-post-title');
   m.require('[html]blog-post-sections');
@@ -37,7 +37,7 @@ mdlr('[html]blog-post', m => {
     post = null;
 
     async connected() {
-      const content = await fetch(`${$www}${this.slug}`).then(r => r.text());
+      const content = await fetch(`${$raw}${this.slug}`).then(r => r.text());
       this.post = this.#contentToJson(content);
       m.redraw(this);
     }

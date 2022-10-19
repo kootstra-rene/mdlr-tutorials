@@ -5,7 +5,7 @@ author: "..."
 tags: ["overview"]
 ---
 
-## MDLR-md rules\n
+## MDLR-md rules
 ![svg-clock](#/resources/svg-clock.html|class="float-left" style="height:15vh")
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
 aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
