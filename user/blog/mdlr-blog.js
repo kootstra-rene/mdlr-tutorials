@@ -86,11 +86,7 @@ mdlr('[unit]www-root', m => {
 
   const loc = window.location;
 
-  let $raw = `${loc.origin}/docs/`;
-  if (-1 !== loc.href.indexOf('github')) {
-    $raw = "https://raw.githubusercontent.com/kootstra-rene/mdlr-tutorials/main/docs/";
-  }
-
+  const $raw = loc.pathname === '/bundler/html' ? `${loc.origin}/docs/` : loc.href.split('#')[0];
   const $root = loc.href.replace(loc.hash, '');
 
   return { $root, $raw };
