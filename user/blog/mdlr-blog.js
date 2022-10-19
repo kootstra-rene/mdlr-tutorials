@@ -38,7 +38,6 @@ mdlr('[unit]markdown', m => {
   }
   function codeReplacer(match, p1, p2, p3, p4) {
     if (p4?.length) {
-      console.log(p4);
       if (p4[0] === '\\') return match.slice(1);
       return `<code>${p4.slice(1, p4.length - 1)}</code>`;
     }
@@ -157,14 +156,17 @@ mdlr('[html]mdlr-blog', m => {
     background-color: #ccc;
     flex: none;
     text-align: center;
-    line-height: 3vh;
-    height: 3vh;
+    line-height: 2em;
+    height: 2em;
     overflow: hidden;
   }
+  header > a {
+    display: inline-block;
+    height: 100%;
+  }
   header > a > img {
-    position:relative;
-    top: -0.75em;
-    height:4em;
+    aspect-ratio: 2/1;
+    height: 100%;
   }
 
   footer {
@@ -226,8 +228,6 @@ mdlr('[html]mdlr-blog', m => {
       this.hash = hash || '#/';
 
       if (this.hash.startsWith('#/posts/')) {
-        // search based on slug...
-        console.log(this.hash);
         const slug = this.hash.replace('#/', '');
         this.post = this.blog.find(post => post.slug === slug);
         if (!this.post) this.hash = '#/';

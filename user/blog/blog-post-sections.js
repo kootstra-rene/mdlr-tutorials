@@ -4,7 +4,7 @@ mdlr('[html]blog-post-sections', m => {
   m.require('[html]blog-post-section-text');
 
   m.html`
-  <blog-post-tldr{=} />
+  <blog-post-tldr{=} /><span>edit</span>
   <blog-post-section-text{=} />`;
 
   m.css`
@@ -18,6 +18,10 @@ mdlr('[html]blog-post-sections', m => {
     overflow-y: auto;
     display: block;
     box-shadow: 0 0 black;
+  }
+  
+  span {
+    float:right;
   }`;
 
   return class {
