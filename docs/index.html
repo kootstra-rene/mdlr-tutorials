@@ -203,8 +203,8 @@ display: flex;
 flex-direction: column;
 }
 blog-post-title {
-line-height: 8vh;
-height: 8vh;
+line-height: 3em;
+height: 3em;
 flex: none;
 }
 blog-post-sections {
@@ -224,7 +224,7 @@ this.post = this.#contentToJson(content);
 m.redraw(this);
 }
 #contentToJson(content) {
-return postToJson(contentRegEx.exec(content).groups);
+return postToJson(contentRegEx.exec(content).groups, this.slug);
 }
 }
 })
@@ -493,9 +493,8 @@ tags = null;
 }
 })
 mdlr('[html]blog-post-sections', m => {
-m.require('[html]blog-post-tldr');
 m.require('[html]blog-post-section-text');
-m.html`<blog-post-tldr{=} /><blog-post-section-text{=} />`;
+m.html`<a href="https://github.com/kootstra-rene/mdlr-tutorials/tree/main/docs/{post?.slug}">edit</a><blog-post-section-text{=} />`;
 m.css`
 * {
 box-sizing: border-box;
@@ -508,8 +507,12 @@ overflow-y: auto;
 display: block;
 box-shadow: 0 0 black;
 }
-span {
-float:right;
+a {
+position:absolute;
+right:0.75em;
+top:0em;
+height: 2em;
+line-height:2em;
 }`;
 return class {
 post = null;
@@ -569,23 +572,6 @@ m.redirect(this.href);
 }
 }
 })
-mdlr('[html]blog-post-tldr', m => {
-m.html`<div>{post?.tldr ?? ''}</div>`;
-m.css`
-:root {
-display: block;
-white-space: nowrap;
-line-height: 1.2em;
-text-align: center;
-padding: 0.5em 0;
-color: #777;
-font-weight: unset;
-font-size: 1.1em;
-}`;
-return class {
-post = null;
-} 
-})
 mdlr('[html]blog-post-section-text', m => {
 const { md } = m.require('markdown');
 m.html`{@html md([post?.body ?? '...'])}`;
@@ -596,7 +582,7 @@ text-align: justify;
 font-size: 1.2em;
 line-height: 1.2em;
 width: 100%;
-padding: 0 1em;
+padding: 0.75em;
 }
 s {
 text-decoration: underline;

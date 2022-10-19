@@ -11,7 +11,7 @@ mdlr('[html]blog-post-section-text', m => {
     font-size: 1.2em;
     line-height: 1.2em;
     width: 100%;
-    padding: 0 1em;
+    padding: 0.75em;
   }
 
   s {

@@ -16,8 +16,8 @@ mdlr('[html]blog-post', m => {
   }
 
   blog-post-title {
-    line-height: 8vh;
-    height: 8vh;
+    line-height: 3em;
+    height: 3em;
     flex: none;
   }
 
@@ -43,7 +43,7 @@ mdlr('[html]blog-post', m => {
     }
 
     #contentToJson(content) {
-      return postToJson(contentRegEx.exec(content).groups);
+      return postToJson(contentRegEx.exec(content).groups, this.slug);
     }
   }
 
