@@ -123,7 +123,7 @@ overflow-y: hidden;
 position: absolute;
 background-color:#666;
 `;
-this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
+this.blog = await fetch(`${$www}all.json`).then(r => r.json());
 this.router(window.location.href);
 if (!window.location.hash != this.hash) window.location = this.hash;
 // primitive router
@@ -218,7 +218,7 @@ return class {
 slug = null;
 post = null;
 async connected() {
-const content = await fetch(`${$www}/${this.slug}`).then(r => r.text());
+const content = await fetch(`${$www}${this.slug}`).then(r => r.text());
 this.post = this.#contentToJson(content);
 m.redraw(this);
 }

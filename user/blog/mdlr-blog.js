@@ -200,7 +200,7 @@ mdlr('[html]mdlr-blog', m => {
         background-color:#666;
       `;
 
-      this.blog = await fetch(`${$www}/all.json`).then(r => r.json());
+      this.blog = await fetch(`${$www}all.json`).then(r => r.json());
 
       this.router(window.location.href);
       if (!window.location.hash != this.hash) window.location = this.hash;

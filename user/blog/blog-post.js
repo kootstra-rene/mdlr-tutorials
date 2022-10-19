@@ -37,7 +37,7 @@ mdlr('[html]blog-post', m => {
     post = null;
 
     async connected() {
-      const content = await fetch(`${$www}/${this.slug}`).then(r => r.text());
+      const content = await fetch(`${$www}${this.slug}`).then(r => r.text());
       this.post = this.#contentToJson(content);
       m.redraw(this);
     }
