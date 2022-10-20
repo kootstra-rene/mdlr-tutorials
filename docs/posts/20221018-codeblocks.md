@@ -5,7 +5,7 @@ author: "..."
 tags: ["code"]
 ---
 
-The following sections describe how to use code-clocks:    
+The following sections describe how to use code-blocks:    
 \```mdlr('[html]tutorial-hello', m => {\n  m.html`<div>hello, world</div>`;\n})```  
 
 results in  
