@@ -14,6 +14,6 @@ results in
   m.html`<div>hello, world</div>`;
 })```
 
-Sometimes \`docker-compose pull` => `docker-compose pull` is useful.
+Sometimes \`docker-compose pull` => `docker-compose pull` is useful.  
 
 Hope this helps...
