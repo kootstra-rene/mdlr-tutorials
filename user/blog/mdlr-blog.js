@@ -227,11 +227,11 @@ mdlr('[html]mdlr-blog', m => {
 
       this.hash = hash || '#/';
 
-      if (this.hash.startsWith('#/posts/')) {
+      // if (this.hash.startsWith('#/posts/')) {
         const slug = this.hash.replace('#/', '');
         this.post = this.blog.find(post => post.slug === slug);
         if (!this.post) this.hash = '#/';
-      }
+      // }
     }
   }
 

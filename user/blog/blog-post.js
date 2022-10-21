@@ -34,10 +34,11 @@ mdlr('[html]blog-post', m => {
 
   return class {
     slug = null;
+    body = null;
     post = null;
 
     async connected() {
-      const content = await fetch(`${$raw}${this.slug}`, {cache: 'no-cache'}).then(r => r.text());
+      const content = this.body ?? await fetch(`${$raw}${this.slug}`, {cache: 'no-cache'}).then(r => r.text());
       this.post = this.#contentToJson(content);
       m.redraw(this);
     }

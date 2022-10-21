@@ -145,11 +145,11 @@ const [hash, search] = url.hash.split('?');
 //   return a;
 // }, {});
 this.hash = hash || '#/';
-if (this.hash.startsWith('#/posts/')) {
+// if (this.hash.startsWith('#/posts/')) {
 const slug = this.hash.replace('#/', '');
 this.post = this.blog.find(post => post.slug === slug);
 if (!this.post) this.hash = '#/';
-}
+// }
 }
 }
 })
@@ -217,9 +217,10 @@ return Object.assign({ slug }, meta, { body })
 }
 return class {
 slug = null;
+body = null;
 post = null;
 async connected() {
-const content = await fetch(`${$raw}${this.slug}`, {cache: 'no-cache'}).then(r => r.text());
+const content = this.body ?? await fetch(`${$raw}${this.slug}`, {cache: 'no-cache'}).then(r => r.text());
 this.post = this.#contentToJson(content);
 m.redraw(this);
 }
