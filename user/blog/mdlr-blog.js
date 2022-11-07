@@ -146,15 +146,15 @@ mdlr('[html]mdlr-blog', m => {
   :root {
     display:flex;
     flex-direction: column;
-    width: 60vw;
+    width: 80vw;
     height: 100%;
-    transform: translate(20vw,0);
+    transform: translate(10vw,0);
     align-items: center;
     box-shadow: rgba(0, 0, 0, 0.5) 0px 6px 32px 0px, rgba(0, 0, 0, 0.6) 0px 6px 16px 0px;
     background-color: #fff;
   }
   blog-post, blog-overview {
-    width: 60vw;
+    width: 80vw;
     flex: 1;
     overflow: hidden;
   }
