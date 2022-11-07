@@ -4,7 +4,7 @@ mdlr('[unit]markdown', m => {
 
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
-  const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/g;
+  const headingReqEx = /^\u0020{0,3}(#{1,6})\u0020*([^\n]*)/mg;
   const inlineReqEx = /(\\?)(!?)\[([^\]]*)\]\(([^\)\|]*)(?:\|([^\)]*))?\)/g;
   const emphasisRegEx = /(\*{1,3})([^*]+)(\*{1,3})/g;
   const strikeRegEx = /(~{1,2})([^~]+)(~{1,2})/g;
