@@ -14,6 +14,10 @@ mdlr('[html]blog-post-section-text', m => {
     padding: 0.75em;
   }
 
+  li {
+    list-style-position: outside;
+  }
+
   s {
     text-decoration: underline;
     text-underline-offset: -.25em;

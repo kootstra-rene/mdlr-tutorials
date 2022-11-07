@@ -57,7 +57,7 @@ mdlr('[unit]markdown', m => {
   }
 
   function bulletReplacer(match, p1, p2, p3) {
-    return `<li>${p3}</li>`;
+    return `<li style="padding-left:${(p1.length >> 1)}em">${p3}</li>`;
   }
 
   function inlineReplacer(match, ...args) {
