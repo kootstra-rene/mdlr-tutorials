@@ -11,6 +11,8 @@ mdlr('[unit]markdown', m => {
   const scriptRegEx = /(\^{1,2})([^^]+)(\^{1,2})/g;
   const codeRegEx = /((?:\\?)`{3,3})((?:[^`]+?|`)*?)(`{3,3})|((?:\\?)`([^`]+)`)/mg;
 
+  const bulletReqEx = /^(\u0020{0,6})([-][\u0020]*)([^\n]*)/mg;
+
   const emphasis = { otag: ['<i>', '<b>', '<b><i>'], etag: ['</i>', '</b>', '</i></b>'] };
   const strike = { otag: ['<u>', '<s>'], etag: ['</u>', '</s>'] };
   const script = { otag: ['<sub>', '<sup>'], etag: ['</sub>', '</sup>'] };
@@ -54,6 +56,10 @@ mdlr('[unit]markdown', m => {
     return `<h${p1.length}>${p2.trim()}</h${p1.length}>`;
   }
 
+  function bulletReplacer(match, p1, p2, p3) {
+    return `<li>${p3}</li>`;
+  }
+
   function inlineReplacer(match, ...args) {
     let [esc, show, name, href, props] = args;
     href = href.replace('#/', $raw);
@@ -69,6 +75,7 @@ mdlr('[unit]markdown', m => {
     return String
       .raw({ raw: strings }, ...values)
       .replace(inlineReqEx, inlineReplacer)
+      .replace(bulletReqEx, bulletReplacer)
       .replace(headingReqEx, headingReplacer)
       .replace(emphasisRegEx, emphasisReplacer)
       .replace(strikeRegEx, strikeReplacer)
