@@ -3,7 +3,7 @@ mdlr('[html]blog-post-sections', m => {
   m.require('[html]blog-post-section-text');
 
   m.html`
-  {#if !!post?.body}
+  {#if post?.type !== "code"}
   <a href="https://github.com/kootstra-rene/mdlr-tutorials/tree/main/docs/{post?.slug}">edit</a>
   {/if}
   <blog-post-section-text{=} />`;
