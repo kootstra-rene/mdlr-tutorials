@@ -22,7 +22,7 @@ mdlr('[html]tutorial-scatterplot', m => {
     .chart {
       background-color: #ccc;
       width: 100%;
-      max-width: 640px;
+      max-width: 100%;
       padding: 1em;
     }`;
 

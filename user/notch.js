@@ -107,7 +107,7 @@ mdlr('[html]tutorials-notch', m => {
           pixels.data[i * 4 + 3] = 255;
         }
 
-        setInterval(clock, 1000 / 100);
+        setInterval(clock, 1000 / 50);
       };
 
       function clock() {
@@ -117,15 +117,16 @@ mdlr('[html]tutorials-notch', m => {
 
       var f = 0;
       function renderMinecraft() {
-        var xRot = Math.sin(Date.now() % 10000 / 10000 * Math.PI * 2) * 0.4
+        const now = Date.now();
+        var xRot = Math.sin(now % 10000 / 10000 * Math.PI * 2) * 0.4
           + Math.PI / 2;
-        var yRot = Math.cos(Date.now() % 10000 / 10000 * Math.PI * 2) * 0.4;
+        var yRot = Math.cos(now % 10000 / 10000 * Math.PI * 2) * 0.4;
         var yCos = Math.cos(yRot);
         var ySin = Math.sin(yRot);
         var xCos = Math.cos(xRot);
         var xSin = Math.sin(xRot);
 
-        var ox = 32.5 + Date.now() % 10000 / 10000 * 64;
+        var ox = 32.5 + now % 10000 / 10000 * 64;
         var oy = 32.5;
         var oz = 32.5;
 

@@ -2,13 +2,13 @@ mdlr('[html]tutorial-numeric-input', m => {
 
   m.html`
   <label>
-    <input type=number value={a} on={change:changeA} min=0 max=10 />
-    <input type=range value={a} on={change:changeA} min=0 max=10 />
+    <input type=number value={a} on={input:changeA} min=0 max=10 />
+    <input type=range value={a} on={input:changeA} min=0 max=10 />
   </label>
   <br/>
   <label>
-    <input type=number value={b} on={change:changeB} min=0 max=10 />
-    <input type=range value={b} on={change:changeB} min=0 max=10 />
+    <input type=number value={b} on={input:changeB} min=0 max=10 />
+    <input type=range value={b} on={input:changeB} min=0 max=10 />
   </label>
 
   <p>{a} + {b} = {+a + +b}</p>`; // +a and +b are explicit conversions to number

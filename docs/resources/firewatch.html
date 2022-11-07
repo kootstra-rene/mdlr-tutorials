@@ -4,10 +4,9 @@ const m = {
 names: /^(?:\[(?<t>[a-z]+)\])?(?<n>[-:a-z0-9]+)$/,
 modules: new Map,
 loader: new Map,
-checks: new Set,
 info: (name, type = 'unit') => {
-const [ , t, n ] = m.names.exec(name) ?? [];
-return { type:t??type, n:`[${t??type}]${n}` };
+const [, t, n] = m.names.exec(name) ?? [];
+return { type: t ?? type, n: `[${t ?? type}]${n}` };
 },
 load: (info, context) => {
 return m.loader.get(info.type)(info, context);
@@ -16,21 +15,13 @@ return m.loader.get(info.type)(info, context);
 m.loader
 .set('unit', (info, context) => {
 const scope = new Modular(info, context);
-const unit = m.modules.get(info.n)(scope);
-// todo: move this check to static analisys
-if (undefined !== unit && '[object Object]' !== Object.prototype.toString.call(unit)) {
-if (!m.checks.has(info.n)) {
-console.error(info, 'should return an object');
-m.checks.add(info.n);
-}
-}
-return unit;
+return m.modules.get(info.n)(scope);
 })
 .set('mdlr', m.loader.get('unit'))
 .set('node', info => require(info.n.replace('[node]', '')));
 class Modular {
-constructor(info, context) {
-this.context = context ?? {};
+constructor(info, context = {}) {
+this.context = context;
 this.name = info.n;
 if (info.type === 'mdlr') {
 this.$ = k => m[k];
@@ -314,11 +305,11 @@ const { nodes, $root, e } = $cache.get($);
 e.update($, nodes, $root);
 }
 m.redirect = path => {
-const { hash, href } = window.location;
-window.location.href = href.replace(hash, path);
+const { hash, href } = globalThis.location;
+globalThis.location.href = href.replace(hash, path);
 }
 cache.set(name, { stateClass, keys: [...names(state)] });
-window.cache = cache;
+globalThis.cache = cache;
 })
 })
 mdlr('[unit]html-tokenizer', m => {
