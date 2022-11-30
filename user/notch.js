@@ -118,8 +118,7 @@ mdlr('[html]tutorials-notch', m => {
       var f = 0;
       function renderMinecraft() {
         const now = Date.now();
-        var xRot = Math.sin(now % 10000 / 10000 * Math.PI * 2) * 0.4
-          + Math.PI / 2;
+        var xRot = Math.sin(now % 10000 / 10000 * Math.PI * 2) * 0.4 + Math.PI / 2;
         var yRot = Math.cos(now % 10000 / 10000 * Math.PI * 2) * 0.4;
         var yCos = Math.cos(yRot);
         var ySin = Math.sin(yRot);
@@ -211,13 +210,15 @@ mdlr('[html]tutorials-notch', m => {
               }
             }
 
-            var r = ((col >> 16) & 0xff) * br * ddist / (255 * 255);
-            var g = ((col >> 8) & 0xff) * br * ddist / (255 * 255);
-            var b = ((col) & 0xff) * br * ddist / (255 * 255);// + (255 -
+            const factor = br * ddist / (255 * 255)
+            var r = ((col >> 16) & 0xff) * factor;
+            var g = ((col >>  8) & 0xff) * factor;
+            var b = ((col >>  0) & 0xff) * factor;
 
-            pixels.data[(x + y * w) * 4 + 0] = r;
-            pixels.data[(x + y * w) * 4 + 1] = g;
-            pixels.data[(x + y * w) * 4 + 2] = b;
+            const offset = (x + y * w) * 4;
+            pixels.data[offset + 0] = r;
+            pixels.data[offset + 1] = g;
+            pixels.data[offset + 2] = b;
           }
         }
       }
