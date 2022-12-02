@@ -18,7 +18,7 @@ During development, `mdlr` requires an environment with docker and docker-compos
 
 ## Why docker-compose?
 
-- You'll get a very small but powerful interface towards your `mdlr` server: `docker-compose pull / up`. That's basically it. 
+- You'll get a very small but powerful interface towards your `mdlr` server: `docker-compose pull / up`. That's basically it.
 - Use `docker-compose.yaml` to change your environment instead of using a commandline. Open up an (online) version of your favorite editor and you're on a roll!
 
 ## Costs
@@ -34,7 +34,7 @@ Mitigations:
   
   
 - We're not married with docker. Any virtualisation environment will do and we're ready to change. For users this would mean changing from `docker-compose.yaml` to `the-new-and-free-virtualisation-thingy.yaml`.
-- for (production) deployment `mdlr` does not depend on docker
+- For (production) deployment `mdlr` does not depend on docker
 
 ## Future
 
