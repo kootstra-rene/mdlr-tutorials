@@ -46,8 +46,7 @@ Let's - for the sake of comparison - not worry about the details (like worrying 
   
 
 ```
-
-function callbackHacker(){
+function callbackHacker() {
   getUser("CB", (_, user) => {
     getUserDetails(user, (_, userDetails) => {
       storeUserDetails(userDetails, (_, result) => {
@@ -56,27 +55,26 @@ function callbackHacker(){
     });
   });
 }
-
-function promiseHacker(){
+  
+function promiseHacker() {
   getUser("PM")
     .then(user => getUserDetails(user))
     .then(userDetails => storeUserDetails(userDetails))
     .then(result => console.log('promise: ' + result));
 }
-
-async function asyncAwaitHacker(){
+  
+async function asyncAwaitHacker() {
   const user = await getUser("AA");
   const userDetails = await getUserDetails(user);
   const result = await storeUserDetails(userDetails);
   console.log('async await: ' + result);
 }
-
-function mdlrHacker(){
+  
+function mdlrHacker() {
   chain([getUser, getUserDetails, storeUserDetails]).do("MD", (_, result) => {
     console.log('mdlr: ' + result);
   });
 }
-
 ```
   
 
@@ -93,14 +91,11 @@ someId, credentials, stuff, we, dont, care, about
 
 ```
   
-
 Our hackers first write some code to pull out a list of credentials. The `mdlr` hackers code:
   
-
 ```
-
 const { readFile } = m.require('[node]fs');
-
+  
 function read(path, done) {
   readFile(path, 'utf8', (error, body) => {
     if (error) return done(error);
@@ -111,11 +106,10 @@ function read(path, done) {
     done(null, records);
   });
 }
-
+  
 read("./user/posts-code/credentials.csv", (_, credentials) => {
   console.log(credentials);
 });
-
 ```
   
   
@@ -124,30 +118,27 @@ read("./user/posts-code/credentials.csv", (_, credentials) => {
 Given the list of credentials, they will now reuse their functions that they created during their first hack:
 
 ### mdlr
-  
-```
 
+```
 // Our old function (for comparison):
-function mdlrHacker(){
+function mdlrHacker() {
   chain([getUser, getUserDetails, storeUserDetails]).do("MD", (_, result) => {
     console.log('mdlr: ' + result);
   });
 }
-
-
+  
 // Our new function (adhering to the foreach spec)
-function mdlrAction({v:credential}, done){
+function mdlrAction({v:credential}, done) {
   chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
     console.log('mdlr: ' + result);
     done(null);
   });   
 }
-
+  
 // Using mdlr's foreach to loop over all credentials
 foreach(credentials).do(mdlrAction, () => {
   console.log('mdlrAction done!');
 });
-
 ```
 
 ### callback

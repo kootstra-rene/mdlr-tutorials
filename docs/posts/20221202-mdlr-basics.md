@@ -1,0 +1,99 @@
+---
+title: "MDLR - The Module System"
+tldr: "Explanation of the MDLR module system"
+author: "Rene Kootstra"
+tags: ["introduction"]
+---
+
+A module in MDLR is created in the following manner: 
+```
+mdlr('[type]module', m => {
+})
+```
+
+## Module Types
+MDLR has different types of modules that you can define, namely:
+- **[unit]**: module
+- **[test]**: test module
+- **[html]**: web-component module
+  
+The folowing sections describe each of these module types and explaines the usage as well as some design decisions. 
+
+### *[unit]* module
+
+The *[unit]* module type is used to create a 'normal' MDLR module. The '[unit]' prefix is optional, so the hello-world module will look like:  
+```
+mdlr('hello-world', m => {
+  console.log('hello world!');
+})
+```
+Modules should be able to import/export values from/to other modules. ES6 introduces the module system and defined the import/export keywords to solve this issue. MDLR doesn't use those keywords as JavaScript already has a method to export values, namely: `return`. To import a value from another module you can use: `m.require`. To explain we refactor the 'hello-world' module to:
+```
+mdlr('console', m => {
+  return { console };
+})
+  
+mdlr('hello-world', m => {
+  const { console } = m.require('console');
+  
+  console.log('hello world!');
+})
+```
+Not the most useful refactor one would say but it makes the import/export very clear and we have added the possibility to inject another console implementation but that will be addressed in another blog.  
+  
+The best practice for exporting values from a module is to return an object with the values that the module provides. 
+The primary reason is the Open-Close principle from SOLID. It will make your module open for change as you can add more value to the returned object. It will also make your module closed for modification, that is if you never remove values nor change their interface nor semantic meaning.  
+  
+So now you know how to define *[unit]* modules...
+
+### *[test]* module
+
+The *[test]* module type is used to create a MDLR test module. The '[test]' prefix is required and enables the testing functionality:
+```
+mdlr('console', m => {
+  return { console };
+})
+  
+mdlr('[test]console', m => {
+  const { it, expect } = m.test;  
+  
+  const { console } = m.require('console');  
+  
+  it('should use the global console', done => {  
+    expect(console).to.eql(globalThis.console);  
+    done();
+  })  
+})
+```
+As can be seen in the example when using *[test]*, the testing functionality is available at `m.test`. It is encouraged to obtain the required functionality via [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment). The example destructures `it` and `expect` and both are required for writing a passing test. `it` defines a test-case and `expect` allows you to verify an expectation. If a test has no expectation it will not pass. When you are finished with the test then you need to call `done()` to singal the completion of the test. This methodology allows for asynchronous behaviour. `done` is a recurring concept in MDLR and more details can be found in this [blog](link:#/posts/20221202-getting-async-things-done.md).  
+  
+So now you know how to define *[test]* modules.. more information about testing can be found in this [blog](link:#/posts/20231203-mdlr-testing.md).
+
+### *[html]* module
+
+The *[html]* module type is used to create a MDLR web-component module. The '[html]' prefix is required and enables the web-component functionality:
+```
+
+mdlr('[html]hello-world', m => {
+  
+  m.html`<span>Hello world{bang}</span>;
+  
+  m.css`span {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+  }`;
+  
+  return class {
+    bang = '!!!';
+  }
+})
+```
+Which results in:  
+![web-component](#/resources/web-component-css-state.html|style="border: 1px solid black; height:2em; width: 10em; padding: 0.5em")  
+  
+As can be seen in the example when using *[html]*, the web-component functionality exposed in m is: `html` and `css`. As the names suggest to create the HTML layout and set the CSS styling. The module returns a class describing the component state and behavior, that will be created for every instance of the web-component. For more information about building web-components see the [blog](link:#/posts/20221129-webpages-with-mdlr.md).  Naturally these `mdlr-tutorials` pages are built with *[html]* modules [github](https://github.com/kootstra-rene/mdlr-tutorials/tree/main/user/blog).
+
+## Differences with other module systems
+
+t.b.d

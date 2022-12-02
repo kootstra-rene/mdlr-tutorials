@@ -5,19 +5,24 @@ mdlr('[html]blog-overview', m => {
 
   m.html`
   <blog-post-title{=} />
+  <div>
   {#each post in blog}
     <blog-overview-item{=post} />
     <hr />
   {:else}
     <span>...</span>
   {/each}
+  </div>
   `
 
   m.css`
   :root {
-    display: block;
+    display: grid;
   }
 
+  :root > div {
+    overflow-y: auto;
+  }
   blog-post-title {
     line-height: 8vh;
     height: 8vh;
