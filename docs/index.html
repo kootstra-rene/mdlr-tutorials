@@ -696,6 +696,7 @@ return `<li style="padding-left:${(p1.length >> 1)}em">${p3}</li>`;
 }
 function inlineReplacer(match, ...args) {
 let [esc, show, name, href, props] = args;
+if (href.startsWith('link:')) return `<a href="${href.slice(5)}" onclick="const { hash, href } = globalThis.location; globalThis.location.href = href.replace(hash, ${href.slice(5)});">${name}</a>`;
 href = href.replace('#/', $raw);
 if (!show) return `<a href="${href}">${name}</a>`;
 if (esc) return `\`${match.slice(1)}\``;
@@ -714,7 +715,7 @@ return String
 .replace(scriptRegEx, scriptReplacer)
 .replace(codeRegEx, codeReplacer)
 .replace(linebreakReqEx, linebreakReplacer)
-.replace(whiteSpaceRegEx, '')
+.replace(whiteSpaceRegEx, '');
 }
 return { md };
 })

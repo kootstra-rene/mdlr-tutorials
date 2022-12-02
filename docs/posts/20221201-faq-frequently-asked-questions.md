@@ -27,7 +27,7 @@ As developers, we should also look at our own actions. If you insist on using (h
   
   
 ```
-var none = function() {};
+var none = function(){};
 ```
   
   
@@ -56,10 +56,10 @@ In addition, we also (sometimes) use (parts of) external packages. But in those 
 - Vanilla Javascript is *very* powerful
 - Javascript engines offer high performance functionality for nearly all things you can dream of
 - `mdlr` adds a superfast feedbackloop to that, both on frontend and backend
-- `mdlr` adds convenience functions like `chain` and `foreach` in the mix that help composing async flows, without (but not excluding) the callback hell and without (but not exluding) poluting your code in with lots of `Promises` or `async` `await`s. (more on that in another blog)
+- `mdlr` adds convenience functions like `chain` and `foreach` in the mix that help composing async flows, without (but not excluding) the callback hell and without (but not exluding) poluting your code with lots of `Promises` or `async` `await`s. (more on that in another blog)
 - `mdlr` decouples the way you organise your files on disk from the way you organise your modules which supercharges refactoring
 - with `mdlr` there is no difference between your development and production environment
 - `mdlr` is fast and small and not a production dependency.
   
-
+  
 [What are you waiting for?!](link:#/posts/20221107-getting-started.md)
