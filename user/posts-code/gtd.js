@@ -49,13 +49,20 @@ mdlr('external-promise-api', m => {
 mdlr('compare-callback', m => {
 
   const { chain } = m.require('chain');
+  const { foreach } = m.require('foreach');
   const { getUser, getUserDetails, storeUserDetails } = m.require('external-callback-api');
+
+  const credentials = ['MM', 'AA', 'BB', 'CC', 'DD', 'EE', 'FF', 'GG', 'HH', 'II'];
+
+  foreach(credentials).do(mdlrAction, () => {
+    console.log('mdlrAction done!');
+  });
 
   function callbackHacker(){
     getUser("CB", (_, user) => {
       getUserDetails(user, (_, userDetails) => {
         storeUserDetails(userDetails, (_, result) => {
-          console.log(result);
+          console.log('callback: ' + result);
         });
       });
     });
@@ -63,8 +70,15 @@ mdlr('compare-callback', m => {
 
   function mdlrHacker(){
     chain([getUser, getUserDetails, storeUserDetails]).do("MD", (_, result) => {
-      console.log(result);
+      console.log('mdlr: ' + result);
     });
+  }
+
+  function mdlrAction({v:credential}, done){
+    chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
+      console.log('mdlr: ' + result);
+      done(null);
+    });   
   }
 
   console.clear();
@@ -81,14 +95,14 @@ mdlr('compare-promise', m => {
     getUser("PM")
       .then(user => getUserDetails(user))
       .then(userDetails => storeUserDetails(userDetails))
-      .then(result => console.log(result));
+      .then(result => console.log('promise: ' + result));
   }
 
   async function asyncAwaitHacker(){
     const user = await getUser("AA");
     const userDetails = await getUserDetails(user);
     const result = await storeUserDetails(userDetails);
-    console.log(result);
+    console.log('async await: ' + result);
   }
 
   console.clear();
@@ -124,3 +138,28 @@ mdlr('callback', m => {
 
 
 });
+
+mdlr('credentials-reader', m => {
+
+  // Usage:
+  // curl -s --insecure 'https://localhost:8443/bundler/node?unit=\[unit\]credentials-reader' | gunzip | node -
+
+  const { readFile } = m.require('[node]fs');
+
+  function read(path, done) {
+    readFile(path, 'utf8', (error, body) => {
+      if (error) return done(error);
+      const records = []
+      body.split('\n')
+        .map(a => a.split(','))
+        .map(([_, credentials]) => records.push(credentials.trim()));
+      done(null, records);
+    });
+  }
+
+  read("./user/posts-code/credentials.csv", (_, credentials) => {
+    console.log(credentials);
+  });
+
+});
+
