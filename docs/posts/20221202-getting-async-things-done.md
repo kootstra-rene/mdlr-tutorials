@@ -34,7 +34,7 @@ Let's first write a small program that uses the same pattern to see how all this
 
 ## user hack
 
-A malicious hacker aquired access to the credentials of one user for a very-important website. In three async calls s/he will have all your userdetails stored forever on the machine where the script runs. These calls are:
+A malicious hacker acquired access to the credentials of one user for a very-important website. In three async calls s/he will have all your userdetails stored forever on the machine where the script runs. These calls are:
   
 
 - `User getUser(credentials)` (to get the user object from the server)
@@ -42,7 +42,7 @@ A malicious hacker aquired access to the credentials of one user for a very-impo
 - `storeUserDetails(UserDetails)` (to store locally)
   
 
-Let's - for the sake of comparison - not worry about the details (like worrying if a value is returned via a callback or a promise returned) and compare the 4 approaches:
+Let's - for the sake of comparison - not worry about the details (like worrying if a value or a promise is returned) and compare the 4 approaches:
   
 
 ```
@@ -82,7 +82,7 @@ function mdlrHacker(){
 
 ## Huge user leak
 
-Now things have gotten worse for the very-important website maintainers; Thousands of user credentials have leaked out into the internet and our hackers are eager to store all the userDetails they can get their hands on. The credentials are served on the web in a `CSV` file with the following structure:
+Now things have gotten worse for the very-important website maintainers; Thousands of user credentials have leaked out onto the internet and our hackers are eager to store all the userDetails they can get their hands on. The credentials are served on the web in a `CSV` file with the following structure:
   
 
 ```
