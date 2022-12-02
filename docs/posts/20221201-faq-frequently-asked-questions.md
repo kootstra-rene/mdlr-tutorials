@@ -20,10 +20,10 @@ We've noticed that the programmer is often much more influential in the performa
 We agree with that last statement! Often when people have strong negative feelings about javascript, they have bad experiences with the javascript *ecosystem*, not necessarily the language. After all, javascript is just a C-style language, not THAT different from other C-style languages like Python, C#, Java, etc. 
   
   
-We agree that the ecosystem is horrible. Therefore, we rarely use it. You'll find no package.json files in our projects. Just like you, we like to spend our time creating value for our customers, not fiddle around with packages, or waiting for transpilers / builds / whatever. We love quick feedback and javascript can be perfect for that ... if you use it properly. 
+We agree that the ecosystem is horrible. Therefore, we rarely use it. You'll find no `package.json` files in our projects. Just like you, we like to spend our time creating value for our customers, not fiddle around with packages, or waiting for transpilers / builds / whatever. We love quick feedback and javascript can be perfect for that ... if you use it properly. 
   
   
-As developers, we should also look at our own actions. If you insist on using (huge) packages for the simplest tasks, you're part of the problem. You don't need `express` to make a `http` call or create a web server. You don't need `react` to route requests to the correct handler, or manage your application state. Most functionality is already available on frontend and backend. Most packages have (invisible) maintenance costs, and add almost [no value](https://www.npmjs.com/package/none) (well ... at least this package sparks some joy).
+As developers, we should also look at our own actions. If you insist on using (huge) packages for the simplest tasks, you're part of the problem. You don't need `express` to make a `http` call or create a web server. You don't need `react` to route requests to the correct handler, or manage your application state. Most functionality is already available on frontend and backend. Most packages have (invisible) maintenance costs, and add almost [no or even negative value](https://www.npmjs.com/package/none) (well ... at least this package sparks some joy).
   
   
 ```
