@@ -42,7 +42,7 @@ mdlr('hello-world', m => {
 Not the most useful refactor one would say but it makes the import/export very clear and we have added the possibility to inject another console implementation but that will be addressed in another blog.  
   
 The best practice for exporting values from a module is to return an object with the values that the module provides. 
-The primary reason is the Open-Close principle from SOLID. It will make your module open for change as you can add more value to the returned object. It will also make your module closed for modification, that is if you never remove values nor change their interface nor semantic meaning.  
+The primary reason is the Open-Close principle from SOLID. It will make your module open for change as you can add more values to the returned object. It will also make your module closed for modification, that is if you never remove values nor change their interface nor semantic meaning.  
   
 So now you know how to define *[unit]* modules...
 
@@ -65,7 +65,7 @@ mdlr('[test]console', m => {
   })  
 })
 ```
-As can be seen in the example when using *[test]*, the testing functionality is available at `m.test`. It is encouraged to obtain the required functionality via [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment). The example destructures `it` and `expect` and both are required for writing a passing test. `it` defines a test-case and `expect` allows you to verify an expectation. If a test has no expectation it will not pass. When you are finished with the test then you need to call `done()` to singal the completion of the test. This methodology allows for asynchronous behaviour. `done` is a recurring concept in MDLR and more details can be found in this [blog](link:#/posts/20221202-getting-async-things-done.md).  
+As can be seen in the example when using *[test]*, the testing functionality is available at `m.test`. It is encouraged to obtain the required functionality via [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment). The example destructures `it` and `expect` and both are required for writing a passing test. `it` defines a test-case and `expect` allows you to verify an expectation. If a test has no expectation it will not pass. When you are finished with the test then you need to call `done()` to signal the completion of the test. This methodology allows for asynchronous behaviour. `done` is a recurring concept in MDLR and more details can be found in this [blog](link:#/posts/20221202-getting-async-things-done.md).  
   
 So now you know how to define *[test]* modules.. more information about testing can be found in this [blog](link:#/posts/20231203-mdlr-testing.md).
 
@@ -96,4 +96,65 @@ As can be seen in the example when using *[html]*, the web-component functionali
 
 ## Differences with other module systems
 
-t.b.d
+As mentioned before MDLR does not support import/export but uses m.require/return instead. To understand why MDLR does so we need to understand what import/export entails. From [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) we get the folowing example: ```import { foo, bar } from "/modules/my-module.js";```
+So we get the `foo` and `bar` functionality from the file */modules/my-module.js*.  
+  
+This simple line has several implications:
+- there is a need to export foo and bar from a file
+  - how do we export?
+  - what needs to be adapted?
+    - JavaScript language?
+    - V8, Node, Deno, JavaScriptCore?
+    - Browsers?
+- there is a need to load the file
+  - where is the file located?
+    - what is the folder structure?
+  - what if there are packages?
+    - folder stucture for multiple packages?
+  - what if I want to change the folder structure?
+    - do I need to change my code?
+    - do I need to change my tests?  
+  
+All the questions above result in:
+- long adoption cycles
+- complex code to handle partial adoption (Polyfill, Transpiling)
+- a lot more tooling. 
+- an inability to change without effort.
+  
+All these things are part of my *itch-factor* so I wanted to design a module system that has none of that, save some minimalistic tooling. So I started out with some requirements:  
+1) no file reference in the modules.  
+2) import/export functionality.  
+3) combine modules together in a single bundle.  
+  
+Well step 3 is only feasable after step 1 and 2 so the focus was one those steps.  
+Step 1 was easy, if you can't have file references you do it by id or name.  
+Step 2 was in hindsight also relatively easy, to import you need to be able to get the modules from a registry and in order to do that module first need to be added to the registry. The first POC really was:
+```
+const m = (() => {
+  const registry = {};
+  return (name, something) => {
+    registry.add(name, something);
+  }
+})();  
+  
+m('my-module', {});
+```
+That solved the adding but getting a module from the registry was a different story. I was working with Node at the time and I liked the `require` but disliked the fact that it was a global method. So to be able to provide the require function to the user, that user needs to provide a callback which the framework could call. That immediatly solved my `something` and lead to the following module definition.
+```
+m('my-module', m => {
+  m.require('some-module');
+})
+```  
+
+So I had the import, the next this was the export. Well if my definition is a function anyway then the return could be its export.
+```
+m('some-module', m => {
+  return { value: 42 };
+})  
+  
+m('my-module', m => {
+  const { value } = m.require('some-module');
+})
+```  
+
+Well then I changed m to mdlr because my strong favor for modular development and the MDLR Module System was born, in plain JavaScript and with one global `mdlr`.
