@@ -2,7 +2,7 @@
 title: "Building web-components with MDLR"
 tldr: "How to ..."
 author: "..."
-tags: ["html", "css", "introduction"]
+tags: ["html", "css", "introduction", "beginner"]
 ---
 
 ## HTML component

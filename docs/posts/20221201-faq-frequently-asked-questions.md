@@ -62,4 +62,4 @@ In addition, we also (sometimes) use (parts of) external packages. But in those 
 - `mdlr` is fast and small and not a production dependency.
   
 
-[What are you waiting for?!](#/posts/20221107-getting-started.md)
+[What are you waiting for?!](link:#/posts/20221107-getting-started.md)

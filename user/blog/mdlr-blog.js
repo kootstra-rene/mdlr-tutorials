@@ -1,6 +1,5 @@
 mdlr('[unit]markdown', m => {
-
-  const { $raw } = m.require('www-root');
+   const { $raw } = m.require('www-root');
 
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
@@ -62,6 +61,7 @@ mdlr('[unit]markdown', m => {
 
   function inlineReplacer(match, ...args) {
     let [esc, show, name, href, props] = args;
+    if (href.startsWith('link:')) return `<a href="${href.slice(5)}" onclick="const { hash, href } = globalThis.location; globalThis.location.href = href.replace(hash, ${href.slice(5)});">${name}</a>`;
     href = href.replace('#/', $raw);
     if (!show) return `<a href="${href}">${name}</a>`;
 
@@ -82,7 +82,7 @@ mdlr('[unit]markdown', m => {
       .replace(scriptRegEx, scriptReplacer)
       .replace(codeRegEx, codeReplacer)
       .replace(linebreakReqEx, linebreakReplacer)
-      .replace(whiteSpaceRegEx, '')
+      .replace(whiteSpaceRegEx, '');
   }
   return { md };
 
