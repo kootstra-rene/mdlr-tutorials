@@ -7,16 +7,14 @@ tags: ["code"]
 
 ## Introduction
 
-What are the different ways to call a function in javascript?
+What are the different ways to put asynchronous functions to use in javascript?
   
   
-- Normal function call with normal return value
 - Function call with callback argument(s)
 - Function call that returns a `Promise`
 - Function calls wrapped in `async` / `await` keywords (which are essentially syntactic sugar on top of Promises) 
   
-
-... and then there is the mdlr way that uses `done()` in functions that are part of the flow of your program. We're assuming you've seen and used normal function calls, callbacks, Promises and async / await before. If not: no problem. `mdlr` can work with all of them like you would in a normal javascript environment. It's just that `mdlr` prefers to get things `done()`.
+... and then there is the mdlr way that uses `done()` in functions that are part of the flow of your program. We're assuming you've seen and used callbacks, Promises and async / await before. If not: no problem. `mdlr` can work with all of them like you would in a normal javascript environment. It's just that `mdlr` prefers to get things `done()`.
   
 ## done()
 
@@ -26,24 +24,21 @@ What are the different ways to call a function in javascript?
 - `done(null, ...args)` at the end of happy paths
 - `done(new Error(), ...args)` at the end of Error paths
   
-
 Instead of `done(null)`, `done()` is also allowed. 
   
   
-Let's first write a small program that uses the same pattern to see how all this works in practice.
+Let's first write a small program that uses the same pattern to see how all this works in practice using the different mechanisms.
 
 ## user hack
 
-A malicious hacker acquired access to the credentials of one user for a very-important website. In three async calls s/he will have all your userdetails stored forever on the machine where the script runs. These async calls are:
+A malicious hacker acquired access to the credentials of one user of a very-important website. In 3 async calls s/he will have all your userdetails stored forever on the machine where the script runs. These async calls are:
   
   
 - `User getUser(credentials)` (to get the user object from the server)
 - `UserDetails getUserDetails(User)` (to get the userdetails from the server)
 - `storeUserDetails(UserDetails)` (to store locally)
   
-  
 Let's - for the sake of comparison - not worry about the details (like worrying if a value or a promise is returned) and compare the 4 approaches:
-  
 
 ```
 function callbackHacker() {
@@ -76,7 +71,6 @@ function mdlrHacker() {
   });
 }
 ```
-  
 
 ## Huge user leak
 
@@ -84,16 +78,13 @@ Now things have gotten worse for the very-important website maintainers; thousan
   
 
 ```
-
 someId, credentials, stuff, we, dont, care, about
 23, MM, bla, dinges, fietsbel, foo, bar
 42, YY, more, things, that, dont, matter
 .. etc.
-
 ```
-  
 
-Let's see what kind of code our `mdlr` hacker would write to convert the csv into a list of credentials.
+Let's see what kind of code our `mdlr` hacker would write to convert the `csv` into a list of credentials.
   
 ```
 const { readFile } = m.require('[node]fs');
@@ -113,70 +104,106 @@ read("./user/posts-code/credentials.csv", (_, credentials) => {
   console.log(credentials);
 });
 ```
-  
-  
-That works! The `mdlr` hacker was productive again, switching to the backend just as easily as to the frontend.
+
+That works! The `mdlr` hacker was productive again, switching to the backend just as easily as to the frontend, using industry-standard error-first callbacks to interact with Node ... and using them in the `mdlr` code as well.
 
 ## Hack all the users! 
 
-Given the list of credentials, they will now reuse their functions that they created during their first hack:
+Given the list of credentials, the `mdlr` hacker will now reuse the function created during the first hack.
 
 ### foreach
 
+As a reference: the old `mdlr` function:
+
 ```
-// The old mdlr function (for comparison):
 function mdlrHacker(){
   chain([getUser, getUserDetails, storeUserDetails]).do("MD", (_, result) => {
     console.log('mdlr: ' + result);
   });
 }
+```
+
+The new code:
+
+```
+foreach(credentials).do(hackUser, () => {
+  console.log('All Users Hacked!');
+});
   
-// The new function (adhering to the foreach spec)
-function mdlrAction({v:credential}, done){
+function hackUser({ v: credential }, done){
   chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
     console.log('mdlr: ' + result);
     done(null);
   });   
 }
-  
-// Using mdlr's foreach to loop over all credentials
-foreach(credentials).do(mdlrAction, () => {
-  console.log('mdlrActions done!');
-});
-
 ```
-  
 
-What happened there? Let's first take a look at the `foreach` spec: `foreach(collection).do(action, ...args, done)`. Here we can see that `foreach` accepts a collection: an array, an object, etc. In this case we provide it with an array of `credentials`. 
+What happened here? Let's first take a look at the `foreach` spec: `foreach(collection).do(action, ...args, done)`. Not surprisingly, `foreach` accepts a collection: an array, an object, etc. In this case we give it an array of `credentials`. 
   
   
-Next it requires an `action` that needs to be handled for each element: `mdlrAction` in this case. The action needs to have an error-first `done` callbackhandler as its last parameter. Its first parameter is the item in the collection where the action should be applied to. This item is delivered as a `{k: key, v: value}` pair in an object by the `foreach` function. The `key` contains the key in the collection (the index in case of an array, the propertyname in case of an object). The `value` contains the item value; one credential in our case. In our `mdlrAction` we destructure that first argument and rename the item that is in `v` to `credential`.
+Next it requires an `action` that needs to be handled for each element: `hackUser` in this case. The action needs to have an error-first `done` callbackhandler as its last parameter. Its first parameter is the item in the collection where the action should be applied to. This item is delivered as a `{k: key, v: value}` pair in an object by the `foreach` function. The `key` contains the key in the collection (the index in case of an array, the propertyname in case of an object). The `value` contains the item value; one credential in our case. In our `hackUser` action we destructure that first argument and rename the item that is in `v` to `credential`.
   
   
-So therefore, it's now possible to reuse the old function with the `chain` inside and be `done()` very quickly. But our mdlr hacker is still not completely happy. The csv is long, and the delays in all these async functions are annoying. S/he would like to introduce some concurrency, but not too much ... too much calls will cause the hacker to be blocked by the very-important website. 
+So therefore, it's now possible to reuse the old function with the `chain` inside and be `done()` very quickly. But our `mdlr` hacker is still not completely happy. The `.csv` file is long, and the delays in all these async functions are annoying. S/he would like to introduce some concurrency, but not too much ... too much calls will cause the hacker to be blocked by the very-important website rate limiting.
 
 ### Concurrency
 
-After some experimentation, it turns out our hacker can spin of 42 concurrent chains. That way, the API won't block the script, and the users will be hacked a lot faster. The only thing that needed to be `done()` was to add `.with({concurrency: 42})` to the code:
+After some experimentation, it turns out our hacker can spin of 42 concurrent chains. That way, the API won't block the script, and all the users will be hacked a lot faster. The only thing that needed to be `done()` was to add `.with({concurrency: 42})` to the code:
   
 
 ```
 
-foreach(credentials).with({concurrency: 42}).do(mdlrAction, () => {
-  console.log('mdlrActions done!');
+foreach(credentials).with({concurrency: 42}).do(hackUser, () => {
+  console.log('All Users Hacked!');
 });
 
 ```
-  
 
 Yup, it's that simple! 🤓
 
+## Recap
+
+The async code to hack all users:
+
+```
+foreach(credentials).with({concurrency: 42}).do(hackUser, () => {
+  console.log('All Users Hacked!');
+});
+  
+function hackUser({ v: credential }, done){
+  chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
+    console.log('mdlr: ' + result);
+    done(null);
+  });   
+}
+```
+
+Let's read that as an experienced `mdlr` developer:
+  
+  
+- for each 'credential' concurrently 'hackUser', which means
+- 'getUser', 'getUserDetails', 'storeUserDetails' in sequence and then log the result
+- finally let me know the script has succeeded
+  
+No callbackhell, no promises, no async await. Small, focused functions. 
+  
+  
+The contracts we needed to take into account to achieve this:
+  
+  
+- error-first 'done()' callback handler: `done(error = null, ...args)`
+- `chain(collection).do(data, ...args, done)` where `data` is the data at the start of the chain
+- `foreach(collection).do(action, ...args, done)` with `action` signature:
+- `action(entry, ...args, done)` where `entry === {k: key, v: value}` 
+  
+It really pays off to memorize these contracts when working with `mdlr`. They all work together nicely, have similar interfaces and create synergy when used properly. They allow for construction of tree-like async workflows, while still allowing direct function calls and interaction with normal callbacks, Promises and async / awaits. In our experience, it allows for focused, short functions that are easy to compose.
+
 ## Conclusion
 
-We started off comparing some ways of handling async functions in javascript. The callback example quickly evolves into a callback hell or callback christmastree. The `Promise` and `async` `await` option look nicer, but require us to introduce Promises and add async/awaits throughout our code. The `mdlr` example gets things `done()` with industry-standard error-first callback handlers *without* the callback hell.
+We started off comparing some ways of handling async functions in javascript. The callback example quickly evolved into a callback hell or callback Christmas Tree 🎄. The `Promise` and `async` `await` option look nicer, but require us to introduce Promises and add async/awaits throughout our code. The `mdlr` example gets things `done()` with industry-standard error-first callback handlers *without* the callback hell. Furthermore the `mdlr` way of getting things done still allows for normal callbacks, Promises or async/awaits to be used if an external package requires it.
   
   
-Then we added 'looping-over-credentials' in the mix and worked out the example for the `mdlr` hacker. Finally, concurrency was added quite easily. All the while, the `mdlr` functions remained short, sweet and focused. Furthermore, using the `chain`, `foreach`, `action` and error-first `done` signatures, we have full control over error paths, logging, workflow composition and function signatures. Pretty neat.
+Then we added 'looping-over-credentials' in the mix and worked out the example for the `mdlr` hacker. Furthermore, concurrency was added quite easily. All the while, the `mdlr` functions remained short, sweet and focused. Finally, using the `chain`, `foreach`, `action` and error-first `done` signatures, we have full control over error paths, logging, workflow composition and function signatures. Pretty neat.
   
   
-How would **you** add looping and concurrency using callbacks, promises or async/awaits? What does the code look like in those cases? What are the costs and benefits of doing it that way?
+How would **you** add looping and concurrency using callbacks, promises or async/awaits? What does the code look like in those cases? What are the costs and benefits of doing it that way? How does your async code evolve when usecases change?

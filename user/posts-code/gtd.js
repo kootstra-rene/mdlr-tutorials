@@ -52,12 +52,6 @@ mdlr('compare-callback', m => {
   const { foreach } = m.require('foreach');
   const { getUser, getUserDetails, storeUserDetails } = m.require('external-callback-api');
 
-  const credentials = ['MM', 'AA', 'BB', 'CC', 'DD', 'EE', 'FF', 'GG', 'HH', 'II'];
-
-  foreach(credentials).with({concurrency: 4}).do(mdlrAction, () => {
-    console.log('mdlrActions done!');
-  });
-
   function callbackHacker(){
     getUser("CB", (_, user) => {
       getUserDetails(user, (_, userDetails) => {
@@ -74,7 +68,13 @@ mdlr('compare-callback', m => {
     });
   }
 
-  function mdlrAction({v:credential}, done){
+  const credentials = ['MM', 'AA', 'BB', 'CC', 'DD', 'EE', 'FF', 'GG', 'HH', 'II'];
+
+  foreach(credentials).with({concurrency: 4}).do(hackUser, () => {
+    console.log('All Users Hacked!');
+  });
+
+  function hackUser({ v: credential }, done){
     chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
       console.log('mdlr: ' + result);
       done(null);
@@ -125,17 +125,6 @@ mdlr('promise', m => {
   }
 
   return { promisify }
-
-});
-
-mdlr('callback', m => {
-
-  // convert a function returning a promise into a function  
-  // using an error first callback
-  function callbackify(fn, ...args){
-    
-  }
-
 
 });
 
