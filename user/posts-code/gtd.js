@@ -54,8 +54,8 @@ mdlr('compare-callback', m => {
 
   const credentials = ['MM', 'AA', 'BB', 'CC', 'DD', 'EE', 'FF', 'GG', 'HH', 'II'];
 
-  foreach(credentials).do(mdlrAction, () => {
-    console.log('mdlrAction done!');
+  foreach(credentials).with({concurrency: 4}).do(mdlrAction, () => {
+    console.log('mdlrActions done!');
   });
 
   function callbackHacker(){

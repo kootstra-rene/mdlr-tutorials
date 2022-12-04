@@ -10,7 +10,7 @@ tags: ["code"]
 What are the different ways to call a function in javascript?
   
   
-- Normal function call
+- Normal function call with normal return value
 - Function call with callback argument(s)
 - Function call that returns a `Promise`
 - Function calls wrapped in `async` / `await` keywords (which are essentially syntactic sugar on top of Promises) 
@@ -34,14 +34,14 @@ Let's first write a small program that uses the same pattern to see how all this
 
 ## user hack
 
-A malicious hacker acquired access to the credentials of one user for a very-important website. In three async calls s/he will have all your userdetails stored forever on the machine where the script runs. These calls are:
+A malicious hacker acquired access to the credentials of one user for a very-important website. In three async calls s/he will have all your userdetails stored forever on the machine where the script runs. These async calls are:
   
-
+  
 - `User getUser(credentials)` (to get the user object from the server)
 - `UserDetails getUserDetails(User)` (to get the userdetails from the server)
 - `storeUserDetails(UserDetails)` (to store locally)
   
-
+  
 Let's - for the sake of comparison - not worry about the details (like worrying if a value or a promise is returned) and compare the 4 approaches:
   
 
@@ -80,18 +80,20 @@ function mdlrHacker() {
 
 ## Huge user leak
 
-Now things have gotten worse for the very-important website maintainers; Thousands of user credentials have leaked out onto the internet and our hackers are eager to store all the userDetails they can get their hands on. The credentials are served on the web in a `CSV` file with the following structure:
+Now things have gotten worse for the very-important website maintainers; thousands of user credentials have leaked out onto the internet and hackers are eager to store all the userDetails they can get their hands on. The credentials are served on the web in a `CSV` file with the following structure:
   
 
 ```
 
 someId, credentials, stuff, we, dont, care, about
 23, MM, bla, dinges, fietsbel, foo, bar
+42, YY, more, things, that, dont, matter
 .. etc.
 
 ```
   
-Our hackers first write some code to pull out a list of credentials. The `mdlr` hackers code:
+
+Let's see what kind of code our `mdlr` hacker would write to convert the csv into a list of credentials.
   
 ```
 const { readFile } = m.require('[node]fs');
@@ -113,22 +115,24 @@ read("./user/posts-code/credentials.csv", (_, credentials) => {
 ```
   
   
+That works! The `mdlr` hacker was productive again, switching to the backend just as easily as to the frontend.
+
 ## Hack all the users! 
 
 Given the list of credentials, they will now reuse their functions that they created during their first hack:
 
-### mdlr
+### foreach
 
 ```
-// Our old function (for comparison):
-function mdlrHacker() {
+// The old mdlr function (for comparison):
+function mdlrHacker(){
   chain([getUser, getUserDetails, storeUserDetails]).do("MD", (_, result) => {
     console.log('mdlr: ' + result);
   });
 }
   
-// Our new function (adhering to the foreach spec)
-function mdlrAction({v:credential}, done) {
+// The new function (adhering to the foreach spec)
+function mdlrAction({v:credential}, done){
   chain([getUser, getUserDetails, storeUserDetails]).do(credential, (_, result) => {
     console.log('mdlr: ' + result);
     done(null);
@@ -137,9 +141,42 @@ function mdlrAction({v:credential}, done) {
   
 // Using mdlr's foreach to loop over all credentials
 foreach(credentials).do(mdlrAction, () => {
-  console.log('mdlrAction done!');
+  console.log('mdlrActions done!');
 });
+
+```
+  
+
+What happened there? Let's first take a look at the `foreach` spec: `foreach(collection).do(action, ...args, done)`. Here we can see that `foreach` accepts a collection: an array, an object, etc. In this case we provide it with an array of `credentials`. 
+  
+  
+Next it requires an `action` that needs to be handled for each element: `mdlrAction` in this case. The action needs to have an error-first `done` callbackhandler as its last parameter. Its first parameter is the item in the collection where the action should be applied to. This item is delivered as a `{k: key, v: value}` pair in an object by the `foreach` function. The `key` contains the key in the collection (the index in case of an array, the propertyname in case of an object). The `value` contains the item value; one credential in our case. In our `mdlrAction` we destructure that first argument and rename the item that is in `v` to `credential`.
+  
+  
+So therefore, it's now possible to reuse the old function with the `chain` inside and be `done()` very quickly. But our mdlr hacker is still not completely happy. The csv is long, and the delays in all these async functions are annoying. S/he would like to introduce some concurrency, but not too much ... too much calls will cause the hacker to be blocked by the very-important website. 
+
+### Concurrency
+
+After some experimentation, it turns out our hacker can spin of 42 concurrent chains. That way, the API won't block the script, and the users will be hacked a lot faster. The only thing that needed to be `done()` was to add `.with({concurrency: 42})` to the code:
+  
+
 ```
 
-### callback
+foreach(credentials).with({concurrency: 42}).do(mdlrAction, () => {
+  console.log('mdlrActions done!');
+});
 
+```
+  
+
+Yup, it's that simple! 🤓
+
+## Conclusion
+
+We started off comparing some ways of handling async functions in javascript. The callback example quickly evolves into a callback hell or callback christmastree. The `Promise` and `async` `await` option look nicer, but require us to introduce Promises and add async/awaits throughout our code. The `mdlr` example gets things `done()` with industry-standard error-first callback handlers *without* the callback hell.
+  
+  
+Then we added 'looping-over-credentials' in the mix and worked out the example for the `mdlr` hacker. Finally, concurrency was added quite easily. All the while, the `mdlr` functions remained short, sweet and focused. Furthermore, using the `chain`, `foreach`, `action` and error-first `done` signatures, we have full control over error paths, logging, workflow composition and function signatures. Pretty neat.
+  
+  
+How would **you** add looping and concurrency using callbacks, promises or async/awaits? What does the code look like in those cases? What are the costs and benefits of doing it that way?
