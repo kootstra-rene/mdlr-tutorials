@@ -67,7 +67,7 @@ mdlr('[test]console', m => {
 ```
 As can be seen in the example when using *[test]*, the testing functionality is available at `m.test`. It is encouraged to obtain the required functionality via [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment). The example destructures `it` and `expect` and both are required for writing a passing test. `it` defines a test-case and `expect` allows you to verify an expectation. If a test has no expectation it will not pass. When you are finished with the test then you need to call `done()` to signal the completion of the test. This methodology allows for asynchronous behaviour. `done` is a recurring concept in MDLR and more details can be found in this [blog](link:#/posts/20221202-getting-async-things-done.md).  
   
-So now you know how to define *[test]* modules.. more information about testing can be found in this [blog](link:#/posts/20231203-mdlr-testing.md).
+So now you know how to define *[test]* modules.. more information about testing can be found in this [blog](link:#/posts/20221203-mdlr-testing.md).
 
 ### *[html]* module
 
@@ -146,7 +146,7 @@ m('my-module', m => {
 })
 ```  
 
-So I had the import, the next this was the export. Well if my definition is a function anyway then the return could be its export.
+So I had the import, the next thing was the export. Well if my definition is a function anyway then the return could be its export.
 ```
 m('some-module', m => {
   return { value: 42 };
@@ -157,4 +157,6 @@ m('my-module', m => {
 })
 ```  
 
-Well then I changed m to mdlr because my strong favor for modular development and the MDLR Module System was born, in plain JavaScript and with one global `mdlr`.
+Well then I changed m to mdlr because my strong favor for modular development and the MDLR Module System was born, in plain JavaScript and with one global `mdlr`.  
+  
+The last thing to tackle was to create bundles but that is explained in this [blog](link:#/posts/20221205-mdlr-bundler.md).
