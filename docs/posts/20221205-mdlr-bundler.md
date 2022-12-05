@@ -54,7 +54,7 @@ Again something I don't like for two reasons:
   
 MDLR solves this by having a bundler-api that bundles on-the-fly and returns the bundle for the specific module type. Type `html` will give a html document containing the web-app and type `node` will give a JavaScript document. 
 
-Iy you started `mdlr-tutorials` via docker the you can:  
+If you started `mdlr-tutorials` via docker then you can:  
 In the browser type: `https://localhost:8443/bundler/html?unit=[html]mdlr-blog` or [click here](https://localhost:8443/bundler/html?unit=[html]mdlr-blog).  
 You should see the mdlr-blog web app.  
   
