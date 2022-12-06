@@ -60,7 +60,7 @@ You should see the mdlr-blog web app.
   
 If you wish to save the mdlr-blog as a file from the commandline, type: `curl --insecure 'https://localhost:8443/bundler/html?unit=[html]mdlr-blog' | gunzip > blog.html`.  
 
-If you have an app that runs with node type: `https://localhost:8443/bundler/node?unit=... | gunzip | node -` and it will run.  
+If you have an app that runs with node type: `curl --insecure https://localhost:8443/bundler/node?unit=... | gunzip | node -` and it will run.  
 
 If you don't like the command-line you can always make a script that makes it easier.  
   
