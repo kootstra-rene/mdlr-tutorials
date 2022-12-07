@@ -29,11 +29,9 @@ During development, `mdlr` requires an environment with docker and docker-compos
 
 ## Risks
 
-- Docker requesting (insane) amounts of license costs all of a sudden.
+- Docker requesting (insane) amounts of license costs all of a sudden.  
   
-
-Mitigations:
-  
+Mitigations:  
   
 - We're not married with docker. Any virtualisation environment will do and we're ready to change. For users this would mean changing from `docker-compose.yaml` to `the-new-and-free-virtualisation-thingy.yaml`.
 - For (production) deployment `mdlr` does not depend on docker
