@@ -1,9 +1,11 @@
 mdlr('[html]blog-overview-item', m => {
 
   m.html`
+  <a href={'#'+slug}>
   <h1>{title}</h1><h2>{tldr}</h2>
-  <a href={'#'+slug}>more...</a>
-  {#each tag in tags}<li>{tag}</li>{/each}`;
+  <span>more...</span>
+  {#each tag in tags}<li>{tag}</li>{/each}
+  </a>`;
 
   m.css`
   :root {
@@ -31,7 +33,7 @@ mdlr('[html]blog-overview-item', m => {
 
   h1 {
     margin: 0;
-    margin-top: 0.25em;
+    padding-top: 0.25em;
     font-size: 1.5em;
   }
 
@@ -44,12 +46,13 @@ mdlr('[html]blog-overview-item', m => {
   }
 
   a {
-    all: unset;
+    all: inherit;
     cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: inherit;
+  }
+
+  span {
+    text-decoration: underline #bbb;
     color: #777;
-    text-decoration-color: #bbb;
     font-size: 0.8em;
   }`;
 
