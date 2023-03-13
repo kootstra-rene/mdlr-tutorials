@@ -20,7 +20,7 @@ mdlr('blog-indexer', m => {
     fs.readFile(slug, 'utf8', (error, body) => {
       const prolog = prologRegEx.exec(body)?.groups;
       try {
-      if (prolog) posts.push(prologToJson(prolog, slug.replace('docs/', ''), body));
+      if (prolog) posts.push(prologToJson(prolog, slug.replace('docs', ''), body));
       }
       catch(e){}
       done();

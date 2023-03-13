@@ -1,5 +1,5 @@
 mdlr('[unit]markdown', m => {
-   const { $raw } = m.require('www-root');
+  const { $raw } = m.require('www-root');
 
   const whiteSpaceRegEx = /(^\s*)|(\s*$)/mg;
   const linebreakReqEx = /\u0020{2,4}\n/mg;
@@ -99,34 +99,9 @@ mdlr('[unit]www-root', m => {
 
 })
 
-mdlr('[html]router-link', m => {
-
-  m.html`<a href={} on={click}>{text}</a>`;
-
-  m.css`
-  :root {
-    display:inline;
-  }
-  
-  a {
-    all: unset;
-    cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: inherit;
-  }`;
-
-  return class {
-    text = null;
-    href = null;
-
-    click(e) {
-      m.redirect(this.href);
-    }
-  }
-
-})
-
 mdlr('[html]mdlr-blog', m => {
+
+  const { Router } = m.require('core:router');
 
   const { $root, $raw } = m.require('www-root');
 
@@ -135,7 +110,7 @@ mdlr('[html]mdlr-blog', m => {
 
   m.html`
   <header><a href="${$root}"><img src="${$raw}resources/mdlr.svg"/></a></header>
-  {#if hash === '#/'}
+  {#if !post}
     <blog-overview{=} />
   {:else}
     <blog-post{=post} />
@@ -188,10 +163,21 @@ mdlr('[html]mdlr-blog', m => {
   }`;
 
   return class {
-    hash = '#/';
     blog = [];
     post = null;
-    // options = null;
+    #router = new Router();
+
+    constructor() {
+      this.#router.get('/', () => {
+        this.post = null;
+        m.redraw(this);
+      })
+
+      this.#router.get('/posts/:slug', ({ path }) => {
+        this.post = this.blog.find(p => p.slug === path);
+        m.redraw(this);
+      })
+    }
 
     async connected() {
       const meta = document.createElement('meta');
@@ -209,36 +195,11 @@ mdlr('[html]mdlr-blog', m => {
       `;
 
       this.blog = await fetch(`${$raw}all.json`).then(r => r.json());
-
-      this.router(window.location.href);
-      if (!window.location.hash != this.hash) window.location = this.hash;
-
-      // primitive router
-      window.addEventListener('hashchange', e => {
-        this.router(e.newURL);
-        m.redraw(this);
-      });
-
-      m.redraw(this);
+      this.#router.connect(window.location.href);
     }
 
-    router(newURL) {
-      const url = new URL(newURL);
-      const [hash, search] = url.hash.split('?');
-
-      // const options = new URLSearchParams(search);
-      // this.options = [...options].reduce((a, [key, value]) => {
-      //   a[key] = value;
-      //   return a;
-      // }, {});
-
-      this.hash = hash || '#/';
-
-      // if (this.hash.startsWith('#/posts/')) {
-        const slug = this.hash.replace('#/', '');
-        this.post = this.blog.find(post => post.slug === slug);
-        if (!this.post) this.hash = '#/';
-      // }
+    disconnect() {
+      this.#router.disconnect();
     }
   }
 

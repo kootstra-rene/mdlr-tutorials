@@ -1,10 +1,8 @@
 mdlr('[html]blog-overview-item', m => {
 
-  m.require('[html]router-link');
-
   m.html`
   <h1>{title}</h1><h2>{tldr}</h2>
-  <router-link href={'#/'+slug} text="more..."/>
+  <a href={'#'+slug}>more...</a>
   {#each tag in tags}<li>{tag}</li>{/each}`;
 
   m.css`
@@ -45,7 +43,11 @@ mdlr('[html]blog-overview-item', m => {
     font-size: 1.1em;
   }
 
-  router-link {
+  a {
+    all: unset;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: inherit;
     color: #777;
     text-decoration-color: #bbb;
     font-size: 0.8em;
