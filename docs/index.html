@@ -126,7 +126,7 @@ background-color:#666;
 this.blog = await fetch(`${$raw}all.json`).then(r => r.json());
 this.#router.connect(window.location.href);
 }
-disconnect() {
+disconnected() {
 this.#router.disconnect();
 }
 }

@@ -198,7 +198,7 @@ mdlr('[html]mdlr-blog', m => {
       this.#router.connect(window.location.href);
     }
 
-    disconnect() {
+    disconnected() {
       this.#router.disconnect();
     }
   }
