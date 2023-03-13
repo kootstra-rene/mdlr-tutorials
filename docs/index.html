@@ -28,16 +28,12 @@ this.$ = k => m[k];
 }
 }
 require(name, context) {
-if (this.context[name]) {
-return this.context[name];
-}
-const info = m.info(name);
-return m.load(info, context);
+return this.context[name] ?? m.load(m.info(name), context);
 }
 }
 return (name, context) => {
 const info = m.info(name);
-if (context && context.constructor === Function) {
+if (context?.constructor === Function) {
 m.modules.set(info.n, context);
 }
 else {
@@ -46,12 +42,13 @@ return m.load(info, context);
 }
 })()
 mdlr('[html]mdlr-blog', m => {
+const { Router } = m.require('core:router');
 const { $root, $raw } = m.require('www-root');
 m.require('[html]blog-overview');
 m.require('[html]blog-post');
 m.html`
 <header><a href="${$root}"><img src="${$raw}resources/mdlr.svg"/></a></header>
-{#if hash === '#/'}
+{#if !post}
 <blog-overview{=} />
 {:else}
 <blog-post{=post} />
@@ -100,10 +97,19 @@ top: 0.2em;
 height:1.2em;
 }`;
 return class {
-hash = '#/';
 blog = [];
 post = null;
-// options = null;
+#router = new Router();
+constructor() {
+this.#router.get('/', () => {
+this.post = null;
+m.redraw(this);
+})
+this.#router.get('/posts/:slug', ({ path }) => {
+this.post = this.blog.find(p => p.slug === path);
+m.redraw(this);
+})
+}
 async connected() {
 const meta = document.createElement('meta');
 meta.name = m.name;
@@ -118,30 +124,69 @@ position: absolute;
 background-color:#666;
 `;
 this.blog = await fetch(`${$raw}all.json`).then(r => r.json());
-this.router(window.location.href);
-if (!window.location.hash != this.hash) window.location = this.hash;
-// primitive router
-window.addEventListener('hashchange', e => {
-this.router(e.newURL);
-m.redraw(this);
-});
-m.redraw(this);
+this.#router.connect(window.location.href);
 }
-router(newURL) {
-const url = new URL(newURL);
-const [hash, search] = url.hash.split('?');
-// const options = new URLSearchParams(search);
-// this.options = [...options].reduce((a, [key, value]) => {
-//   a[key] = value;
-//   return a;
-// }, {});
-this.hash = hash || '#/';
-// if (this.hash.startsWith('#/posts/')) {
-const slug = this.hash.replace('#/', '');
-this.post = this.blog.find(post => post.slug === slug);
-if (!this.post) this.hash = '#/';
-// }
+disconnect() {
+this.#router.disconnect();
 }
+}
+})
+mdlr('[unit]core:router', m => {
+const { decode } = m.require('router-url');
+const endpoints = { get: [], put: [], head: [], post: [], delete: [], options: [] };
+function register(method, route, handler) {
+const server = decode(`https://dontcare${route}`).server;
+endpoints[method] = endpoints[method].filter(a => a.path !== route);
+endpoints[method].push(Object.assign({}, server, { handler }));
+}
+function shim(route, call) {
+return {
+get path() {
+return call.path;
+},
+get params() {
+return Object.seal(call.path.match(route.regex)?.groups ?? {});
+},
+get search() {
+return Object.seal(Object.fromEntries(call.search));
+}
+}
+}
+class Router {
+#mode = 'client';
+#endpoints = { get: [] };
+#handler = this.handler.bind(this);
+constructor(mode = 'client') {
+this.#mode = mode;
+this.get = this.register.bind(this, 'get');
+}
+register(method, route, handler) {
+const descriptor = decode(`https://dontcare${route}`).server;
+this.#endpoints[method] = this.#endpoints[method].filter(a => a.path !== route);
+this.#endpoints[method].push(Object.assign({}, descriptor, { handler }));
+}
+filter(method, descriptor) {
+const route = descriptor[this.#mode] ?? { path: '/' };
+return this.#endpoints[method]
+.filter(a => a.regex.test(route.path))
+.map(a => () => a.handler.call(a, shim(a, route)))
+}
+handler(e) {
+const list = this.filter('get', decode(e.newURL));
+if (list.length === 1) {
+return list[0]();
+}
+}
+connect(url) {
+window.addEventListener('hashchange', this.#handler);
+if (url) this.#handler({ newURL: url });
+}
+disconnect() {
+window.removeEventListener('hashchange', this.#handler);
+}
+}
+return {
+Router
 }
 })
 mdlr('[unit]www-root', m => {
@@ -231,6 +276,7 @@ const $cache = new Map;
 const { tokenizer } = _.require('html-tokenizer');
 const eachRegEx = /^(?<item>[a-zA-Z0-9-]+(,\s*[a-zA-Z0-9-]+)?) in (?<member>[^}]+)$/;
 const attrRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}:]*?)(:(?<h>[^}]*))?})?$/;
+const openRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}=]*?)(=(?<h>[^}]*))?})?$/;
 const copyRegEx = /^\{(?<code>[^}]+)\}|(?<text>.*)$/;
 function defineElement(name, e, $) {
 customElements.define(name, class extends HTMLElement {
@@ -263,19 +309,19 @@ for (let { id, type, data } of tokenizer(markup)) {
 let code;
 switch (type) {
 case 'open':
-const { n, e, h, d } = attrRegEx.exec(id).groups;
+const { n, e, h, d } = openRegEx.exec(id).groups;
 const isHtmlModule = cache.has(n);
 const xmlns = (data.find(a => a.key === 'xmlns') ?? {}).value;
 create += `$e[++$i] = $d.createElementNS(${xmlns ? `'${xmlns}'` : '($t[0].namespaceURI ?? \'http://www.w3.org/1999/xhtml\')'}, '${n}');\n`;
 if (d) {
 const m = (h || e) || n;
-if (m[0] !== '=') {
-create += `$.${m} = $e[$i].$ ?? $e[$i];\n`;
+if (e) {
+create += `$.${e} = $e[$i].$ ?? $e[$i];\n`;
 }
-else {
-const v = m.slice(1) || '$';
+if (h !== undefined && h !== null) {
+const v = h || '$';
 cache.get(n).keys.forEach(k => {
-add(`if(${v}.${k}) $e[$i].$.${k} = ${v}.${k};\n`);
+add(`if(${v}.${k}) ${e || '$e[$i].$'}.${k} = ${v}.${k};\n`);
 });
 }
 }
@@ -416,6 +462,40 @@ cache.set(name, { stateClass, keys: [...names(state)] });
 globalThis.cache = cache;
 })
 })
+mdlr('[unit]router-url', m => {
+function matcher(path) {
+const parts = path.split('/').map(a => a[0] !== ':' ? (a === '*' ? '.+' : a) : `(?<${a.slice(1)}>[^/]+)`);
+return new RegExp(`^${parts.join('/')}$`);
+}
+function block(url) {
+return !url ? null : {
+path: url.pathname,
+hash: url.hash.slice(1),
+regex: matcher(url.pathname),
+search: url.searchParams
+}
+}
+function decode(url) {
+const server = new URL(decodeURI(url));
+let [, hash, path] = server.hash.split('#');
+let client;
+if (hash && hash[0] === '/') {
+client = new URL(hash ?? '', server.origin);
+hash = '';
+}
+else {
+client = new URL(path ?? '', server.origin);
+}
+client.hash = hash ?? '';
+server.hash = '';
+return {
+origin: server.origin,
+server: block(server),
+client: hash !== undefined ? block(client) : null
+};
+}
+return { decode };
+})
 mdlr('[html]blog-post-title', m => {
 m.html`<div>{title ?? ''}</div>`;
 m.css`
@@ -438,11 +518,12 @@ title = null;
 } 
 })
 mdlr('[html]blog-overview-item', m => {
-m.require('[html]router-link');
 m.html`
+<a href={'#'+slug}>
 <h1>{title}</h1><h2>{tldr}</h2>
-<router-link href={'#/'+slug} text="more..."/>
-{#each tag in tags}<li>{tag}</li>{/each}`;
+<span>more...</span>
+{#each tag in tags}<li>{tag}</li>{/each}
+</a>`;
 m.css`
 :root {
 display: block;
@@ -467,7 +548,7 @@ margin: 0 0 0 0.25em;
 }
 h1 {
 margin: 0;
-margin-top: 0.25em;
+padding-top: 0.25em;
 font-size: 1.5em;
 }
 h2 {
@@ -477,9 +558,13 @@ color: #777;
 font-weight: unset;
 font-size: 1.1em;
 }
-router-link {
+a {
+all: inherit;
+cursor: pointer;
+}
+span {
+text-decoration: underline #bbb;
 color: #777;
-text-decoration-color: #bbb;
 font-size: 0.8em;
 }`;
 return class {
@@ -552,26 +637,6 @@ yield $(hint, 'hint', body);
 }
 }
 return { tokenizer };
-})
-mdlr('[html]router-link', m => {
-m.html`<a href={} on={click}>{text}</a>`;
-m.css`
-:root {
-display:inline;
-}
-a {
-all: unset;
-cursor: pointer;
-text-decoration: underline;
-text-decoration-color: inherit;
-}`;
-return class {
-text = null;
-href = null;
-click(e) {
-m.redirect(this.href);
-}
-}
 })
 mdlr('[html]blog-post-section-text', m => {
 const { md } = m.require('markdown');

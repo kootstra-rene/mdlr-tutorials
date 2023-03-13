@@ -11,7 +11,7 @@ During development, `mdlr` requires an environment with docker and docker-compos
 
 ## Why docker?
 
-```mdlr[blog-list
+```[html]unordered-list
 - Encapsulation; no contamination of development environment
 - All `mdlr` projects share the same docker image (compare with npm)
 - The javascript that is bundled during development (by `mdlr`, inside the docker container) is the exact same javascript that will run in production.

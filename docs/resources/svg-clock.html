@@ -28,16 +28,12 @@ this.$ = k => m[k];
 }
 }
 require(name, context) {
-if (this.context[name]) {
-return this.context[name];
-}
-const info = m.info(name);
-return m.load(info, context);
+return this.context[name] ?? m.load(m.info(name), context);
 }
 }
 return (name, context) => {
 const info = m.info(name);
-if (context && context.constructor === Function) {
+if (context?.constructor === Function) {
 m.modules.set(info.n, context);
 }
 else {
@@ -52,21 +48,25 @@ m.html`
 <circle class="dialplate" r="48" />
 <text x="0" y="18" dominant-baseline="middle" text-anchor="middle" >{logo}</text>
 {#each m in [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]}
-<line class="major" y1="35" y2="45" transform="rotate({6 * m})" stroke-linecap="round" />
+<line class="major" y1="35" y2="45" transform="rotate({6 * m})" />
 {#each o in [1, 2, 3, 4]}
-<line class="minor" y1="42" y2="45" transform="rotate({6 * (m + o)})" stroke-linecap="round" />
+<line class="minor" y1="42" y2="45" transform="rotate({6 * (m + o)})" />
 {/each}
 {/each}
-<line class="hour" y1="2" y2="-20" transform="rotate({30 * hours + minutes / 2})" stroke-linecap="round" />
-<line class="minute" y1="4" y2="-30" transform="rotate({6 * minutes + seconds / 10})" stroke-linecap="round" />
-<line class="second" y1="10" y2="-38" transform="rotate({6 * seconds})" stroke-linecap="round" />
+<line class="hours" y1="2" y2="-20" transform="rotate({30 * hours + minutes / 2})" />
+<line class="minutes" y1="4" y2="-30" transform="rotate({6 * minutes + seconds / 10})" />
+<line class="seconds" y1="10" y2="-38" transform="rotate({6 * seconds})" />
 </svg>`;
-m.css`:root {
+m.css`
+:root {
 position: absolute;
 left: 0;
 top: 0;
 right:0;
 bottom: 0;
+}
+svg > * {
+stroke-linecap: round;
 }
 .dialplate {
 stroke: #eee;
@@ -103,6 +103,10 @@ offset = 0; // in minutes
 hours = 0;
 minutes = 0;
 seconds = 0;
+connected() {
+setInterval(this.#updateTime.bind(this), 500);
+this.#updateTime();
+}
 #updateTime() {
 const tzOffset = (this.offset + utcOffset) * 60 * 1000;
 let time = new Date(Date.now() + tzOffset);
@@ -110,10 +114,6 @@ this.hours = time.getHours();
 this.minutes = time.getMinutes();
 this.seconds = time.getSeconds();
 m.render(this);
-}
-connected() {
-setInterval(this.#updateTime.bind(this), 500);
-this.#updateTime();
 }
 }
 })
@@ -123,6 +123,7 @@ const $cache = new Map;
 const { tokenizer } = _.require('html-tokenizer');
 const eachRegEx = /^(?<item>[a-zA-Z0-9-]+(,\s*[a-zA-Z0-9-]+)?) in (?<member>[^}]+)$/;
 const attrRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}:]*?)(:(?<h>[^}]*))?})?$/;
+const openRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}=]*?)(=(?<h>[^}]*))?})?$/;
 const copyRegEx = /^\{(?<code>[^}]+)\}|(?<text>.*)$/;
 function defineElement(name, e, $) {
 customElements.define(name, class extends HTMLElement {
@@ -155,19 +156,19 @@ for (let { id, type, data } of tokenizer(markup)) {
 let code;
 switch (type) {
 case 'open':
-const { n, e, h, d } = attrRegEx.exec(id).groups;
+const { n, e, h, d } = openRegEx.exec(id).groups;
 const isHtmlModule = cache.has(n);
 const xmlns = (data.find(a => a.key === 'xmlns') ?? {}).value;
 create += `$e[++$i] = $d.createElementNS(${xmlns ? `'${xmlns}'` : '($t[0].namespaceURI ?? \'http://www.w3.org/1999/xhtml\')'}, '${n}');\n`;
 if (d) {
 const m = (h || e) || n;
-if (m[0] !== '=') {
-create += `$.${m} = $e[$i].$ ?? $e[$i];\n`;
+if (e) {
+create += `$.${e} = $e[$i].$ ?? $e[$i];\n`;
 }
-else {
-const v = m.slice(1) || '$';
+if (h !== undefined && h !== null) {
+const v = h || '$';
 cache.get(n).keys.forEach(k => {
-add(`if(${v}.${k}) $e[$i].$.${k} = ${v}.${k};\n`);
+add(`if(${v}.${k}) ${e || '$e[$i].$'}.${k} = ${v}.${k};\n`);
 });
 }
 }

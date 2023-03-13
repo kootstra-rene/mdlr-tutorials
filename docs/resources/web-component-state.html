@@ -28,16 +28,12 @@ this.$ = k => m[k];
 }
 }
 require(name, context) {
-if (this.context[name]) {
-return this.context[name];
-}
-const info = m.info(name);
-return m.load(info, context);
+return this.context[name] ?? m.load(m.info(name), context);
 }
 }
 return (name, context) => {
 const info = m.info(name);
-if (context && context.constructor === Function) {
+if (context?.constructor === Function) {
 m.modules.set(info.n, context);
 }
 else {
@@ -57,6 +53,7 @@ const $cache = new Map;
 const { tokenizer } = _.require('html-tokenizer');
 const eachRegEx = /^(?<item>[a-zA-Z0-9-]+(,\s*[a-zA-Z0-9-]+)?) in (?<member>[^}]+)$/;
 const attrRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}:]*?)(:(?<h>[^}]*))?})?$/;
+const openRegEx = /^(?<n>[a-zA-Z0-9-]*)(?<d>{(?<e>[^}=]*?)(=(?<h>[^}]*))?})?$/;
 const copyRegEx = /^\{(?<code>[^}]+)\}|(?<text>.*)$/;
 function defineElement(name, e, $) {
 customElements.define(name, class extends HTMLElement {
@@ -89,19 +86,19 @@ for (let { id, type, data } of tokenizer(markup)) {
 let code;
 switch (type) {
 case 'open':
-const { n, e, h, d } = attrRegEx.exec(id).groups;
+const { n, e, h, d } = openRegEx.exec(id).groups;
 const isHtmlModule = cache.has(n);
 const xmlns = (data.find(a => a.key === 'xmlns') ?? {}).value;
 create += `$e[++$i] = $d.createElementNS(${xmlns ? `'${xmlns}'` : '($t[0].namespaceURI ?? \'http://www.w3.org/1999/xhtml\')'}, '${n}');\n`;
 if (d) {
 const m = (h || e) || n;
-if (m[0] !== '=') {
-create += `$.${m} = $e[$i].$ ?? $e[$i];\n`;
+if (e) {
+create += `$.${e} = $e[$i].$ ?? $e[$i];\n`;
 }
-else {
-const v = m.slice(1) || '$';
+if (h !== undefined && h !== null) {
+const v = h || '$';
 cache.get(n).keys.forEach(k => {
-add(`if(${v}.${k}) $e[$i].$.${k} = ${v}.${k};\n`);
+add(`if(${v}.${k}) ${e || '$e[$i].$'}.${k} = ${v}.${k};\n`);
 });
 }
 }
