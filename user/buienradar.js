@@ -17,6 +17,10 @@ mdlr('[html]tutorial-buienradar', m => {
   {/if}`;
 
   m.css`
+  :root {
+    background-color: white;
+    display: block;
+  }
   tr, img {
     line-height: 1em;
     height: 1em;

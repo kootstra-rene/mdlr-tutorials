@@ -8,7 +8,7 @@ mdlr('[html]tutorial-firewatch', m => {
   </a>
   <div>
     <span style="opacity:{opacity}">scroll down</span>
-    <div>You have scrolled {y} pixels</div>
+    <div>You have scrolled {y.toFixed(1)} pixels</div>
   </div>`;
 
   m.css`

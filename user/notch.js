@@ -1,4 +1,4 @@
-mdlr('[html]tutorials-notch', m => {
+mdlr('[html]tutorial-notch', m => {
 
   m.html`<canvas id="game" width="424" height="240" />`;
 
@@ -146,7 +146,7 @@ mdlr('[html]tutorials-notch', m => {
             var br = 255;
             var ddist = 0;
 
-            var closest = 32;
+            var closest = 24;
             for (var d = 0; d < 3; d++) {
               var dimLength = _xd;
               if (d == 1)

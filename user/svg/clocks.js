@@ -26,6 +26,10 @@ mdlr('[html]tutorial-clocks', m => {
         offset: 0
       },
       {
+        name: 'UTC+03:00',
+        offset: +3 * 60
+      },
+      {
         name: 'UTC-06:00',
         offset: -6 * 60
       }]
