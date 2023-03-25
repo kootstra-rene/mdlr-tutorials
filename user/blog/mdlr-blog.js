@@ -92,8 +92,15 @@ mdlr('[unit]www-root', m => {
 
   const loc = window.location;
 
-  const $raw = loc.pathname === '/bundler/html' ? `${loc.origin}/docs/` : loc.href.split('#')[0];
-  const $root = loc.href.replace(loc.hash, '');
+  if (loc.pathname.indexOf('/app/html') === 0) {
+    return { $raw: `${loc.origin}/docs/`, $root: loc.href.replace(loc.hash, '') }
+  }
+  else if (loc.pathname === '/bundler/html') {
+    return { $raw: `${loc.origin}/docs/`, $root: loc.href.replace(loc.hash, '') }
+  }
+  else {
+    return { $raw: loc.href.split('#')[0], $root: loc.href.replace(loc.hash, '') }
+  }
 
   return { $root, $raw };
 
