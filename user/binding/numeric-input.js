@@ -11,7 +11,7 @@ mdlr('[html]tutorial-numeric-input', m => {
     <input type=range value={b} on={input:changeB} min=0 max=10 />
   </label>
 
-  <p>{a} + {b} = {+a + +b}</p>`; // +a and +b are explicit conversions to number
+  <p>{a} + {b} = {a + b}</p>`;
 
   m.css`
   :root {
@@ -30,12 +30,12 @@ mdlr('[html]tutorial-numeric-input', m => {
     b = 0;
 
     changeA(e) {
-      this.a = e.target.value;
+      this.a = +e.target.value;
       m.render(this);
     }
 
     changeB(e) {
-      this.b = e.target.value;
+      this.b = +e.target.value;
       m.render(this);
     }
   }

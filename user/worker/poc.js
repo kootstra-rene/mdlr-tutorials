@@ -5,7 +5,8 @@ mdlr('worker:poc-worker', m => {
   const uuid = generate();
 
   postMessage(`started worker: ${uuid}`);
-  for (; ;); // hog the cpu
+  // for (; ;); // hog the cpu
+  setTimeout(() => {postMessage(`stopped worker: ${uuid}`);}, 5000)
 })
 
 mdlr('worker:poc', m => {
@@ -23,8 +24,8 @@ mdlr('worker:poc', m => {
     bots.push(worker);
   }
 
-  setTimeout(() => {
-    bots.forEach(worker => worker.terminate());
-  }, 5000);
+  // setTimeout(() => {
+  //   bots.forEach(worker => worker.terminate());
+  // }, 5000);
 
 })

@@ -62,7 +62,7 @@ mdlr('[unit]markdown', m => {
   function inlineReplacer(match, ...args) {
     let [esc, show, name, href, props] = args;
     if (href.startsWith('link:')) return `<a href="${href.slice(5)}" onclick="const { hash, href } = globalThis.location; globalThis.location.href = href.replace(hash, ${href.slice(5)});">${name}</a>`;
-    href = href.replace('#/', $raw);
+    href = href.replace('#', $raw);
     if (!show) return `<a href="${href}">${name}</a>`;
 
     if (esc) return `\`${match.slice(1)}\``;
@@ -93,10 +93,10 @@ mdlr('[unit]www-root', m => {
   const loc = window.location;
 
   if (loc.pathname.indexOf('/app/html') === 0) {
-    return { $raw: `${loc.origin}/docs/`, $root: loc.href.replace(loc.hash, '') }
+    return { $raw: `${loc.origin}/docs`, $root: loc.href.replace(loc.hash, '') }
   }
   else if (loc.pathname === '/bundler/html') {
-    return { $raw: `${loc.origin}/docs/`, $root: loc.href.replace(loc.hash, '') }
+    return { $raw: `${loc.origin}/docs`, $root: loc.href.replace(loc.hash, '') }
   }
   else {
     return { $raw: loc.href.split('#')[0], $root: loc.href.replace(loc.hash, '') }
@@ -116,13 +116,13 @@ mdlr('[html]mdlr-blog', m => {
   m.require('[html]blog-post');
 
   m.html`
-  <header><a href="${$root}"><img src="${$raw}resources/mdlr.svg"/></a></header>
+  <header><a href="${$root}"><img src="${$raw}/resources/mdlr.svg"/></a></header>
   {#if !post}
     <blog-overview{=} />
   {:else}
     <blog-post{=post} />
   {/if}
-  <footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$raw}resources/github.png" /></a></footer>`
+  <footer><a href="https://github.com/kootstra-rene/mdlr-tutorials"><img src="${$raw}/resources/github.png" /></a></footer>`
 
   m.css`
   :root {
@@ -201,7 +201,7 @@ mdlr('[html]mdlr-blog', m => {
         background-color:#666;
       `;
 
-      this.blog = await fetch(`${$raw}all.json`).then(r => r.json());
+      this.blog = await fetch(`${$raw}/all.json`).then(r => r.json());
       this.#router.connect(window.location.href);
     }
 

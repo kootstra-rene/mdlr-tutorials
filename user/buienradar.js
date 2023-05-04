@@ -7,7 +7,8 @@ mdlr('[html]tutorial-buienradar', m => {
       <tr>
         <td>{station.regio}</td>
         <td>{station.temperature ?? '-'}</td>
-        <td><img src="{station.iconurl}" /></td>
+        <td>{station.winddirection??''}{station.windspeedBft??''}</td>
+        <td><img alt="{station.weatherdescription}" src="{station.iconurl}" /></td>
         <td>{station.weatherdescription}</td>
       </tr>
     {/each}
@@ -24,6 +25,10 @@ mdlr('[html]tutorial-buienradar', m => {
   tr, img {
     line-height: 1em;
     height: 1em;
+    aspect-ratio: 1/1;
+  }
+  td:nth-child(2), td:nth-child(3) {
+    text-align: center;
   }`;
 
   return class {
