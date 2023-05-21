@@ -1,6 +1,6 @@
 mdlr('[html]css-paper-pirouette', m => {
 
-  // https://codepen.io/team/keyframers/pen/YzKjoev
+  // based on: https://codepen.io/team/keyframers/pen/YzKjoev
 
   m.html`
   <div id="app">
@@ -42,6 +42,8 @@ mdlr('[html]css-paper-pirouette', m => {
   align-items: center;
   background: var(--color-bg);
   height: 100%;
+  font-family: sans-serif;
+  user-select: none;
 
   & *, & *:before, & *:after {
     box-sizing: border-box;
@@ -169,7 +171,7 @@ mdlr('[html]css-paper-pirouette', m => {
     width:100%;
     height:100%;
     text-align: center;
-    font-size: 3rem;
+    font-size: 5vh;
     font-weight: bold;
   }
   & .paper.-rogue {
@@ -227,6 +229,15 @@ mdlr('[html]css-paper-pirouette', m => {
 
   return class {
     papers = [0, 1, 2, 3, 4];
-    text = "mdlr."
+    text = "mdlr.is.an.awesome.developer.experience...";
+
+    connected(e) {
+      let offset = this.papers.length;
+      e.addEventListener("animationiteration", e => {
+        if (e.animationName !== 'fly-in') return;
+        const elem = e.target.querySelector('span');
+        elem.textContent = this.text[offset++ % this.text.length];
+      });
+    }
   }
 })
