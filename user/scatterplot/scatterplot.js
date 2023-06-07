@@ -4,26 +4,26 @@ mdlr('[html]tutorial-scatterplot', m => {
   m.require('[html]tutorial-scatterplot-graph');
 
   m.html`
-    <div class="chart">
-      <h2>Anscombe's quartet</h2>
-      {#each set in dataset}
-        <tutorial-scatterplot-graph points={set.data} />
-      {/each}
-    </div>`;
+    <h1>Anscombe's quartet</h1>
+    {#each set in dataset}
+      <tutorial-scatterplot-graph points={set.data} />
+    {/each}`;
 
   m.css`
     :root {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);      
-    }
-
-    .chart {
-      background-color: #ccc;
+      display: block;
+      position: relative;
       width: 100%;
-      max-width: 100%;
-      padding: 1em;
+      height: 100%;
+      padding: 2rem;
+      background-color: #ccc;
+    }
+    > h1 {
+      height: 5%;
+      line-height: 5%;
+    }
+    > tutorial-scatterplot-graph {
+      height: 47.5%;
     }`;
 
   return class {

@@ -3,13 +3,13 @@ mdlr('[html]tutorial-buienradar', m => {
   m.html`
   {#if feed}
     <table>
-    {#each station in feed.actual.stationmeasurements.sort((a, b) => a.regio.localeCompare(b.regio))}
+    {#each s in feed.actual.stationmeasurements.sort((a, b) => a.regio.localeCompare(b.regio))}
       <tr>
-        <td>{station.regio}</td>
-        <td>{station.temperature ?? '-'}</td>
-        <td>{station.winddirection??''}{station.windspeedBft??''}</td>
-        <td><img alt="{station.weatherdescription}" src="{station.iconurl}" /></td>
-        <td>{station.weatherdescription}</td>
+        <td>{s.regio}</td>
+        <td>{s.temperature??'-'}</td>
+        <td>{s.winddirection??''}{s.windspeedBft??''}</td>
+        <td><img alt="{s.weatherdescription}" src="{s.iconurl}" /></td>
+        <td>{s.weatherdescription}</td>
       </tr>
     {/each}
     </table>
@@ -21,11 +21,17 @@ mdlr('[html]tutorial-buienradar', m => {
   :root {
     background-color: white;
     display: block;
+    overflow-y: auto;
+    height: 100%;
   }
   tr, img {
     line-height: 1em;
     height: 1em;
     aspect-ratio: 1/1;
+    font-size: 0.9rem;
+  }
+  td {
+    padding: 0 0.25rem;
   }
   td:nth-child(2), td:nth-child(3) {
     text-align: center;

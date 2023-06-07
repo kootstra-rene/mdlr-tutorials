@@ -9,6 +9,7 @@ mdlr('[html]tutorial-canvas-gradient', m => {
     height: 100vh;
     width: 100vw;
     background-color: #222;
+    overflow: hidden;
   }
   canvas {
     height:100vh;

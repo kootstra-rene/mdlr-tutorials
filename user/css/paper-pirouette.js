@@ -2,6 +2,8 @@ mdlr('[html]css-paper-pirouette', m => {
 
   // based on: https://codepen.io/team/keyframers/pen/YzKjoev
 
+  m.require('foreach')
+  
   m.html`
   <div id="app">
     <div class="papers">
@@ -10,7 +12,7 @@ mdlr('[html]css-paper-pirouette', m => {
         <div class="segment">
           <div class="segment">
             <div class="segment">
-            <span>{text[i]}</span>
+              <span>-{text[i]}-</span>
               <div class="segment">
                 <div class="segment"/>
               </div>
@@ -44,6 +46,7 @@ mdlr('[html]css-paper-pirouette', m => {
   height: 100%;
   font-family: sans-serif;
   user-select: none;
+  overflow: hiddem;
 
   & *, & *:before, & *:after {
     box-sizing: border-box;
@@ -55,7 +58,7 @@ mdlr('[html]css-paper-pirouette', m => {
   }
 
   & #app {
-    height: 70vmin;
+    height: 65vmin;
     width: 40vmin;
     display: flex;
     justify-content: center;
@@ -132,7 +135,6 @@ mdlr('[html]css-paper-pirouette', m => {
 
   & .paper {
     --segments: 5;
-    --segment: calc(100% * 1 / var(--segments));
     position: absolute;
     top: 0;
     left: 0;
@@ -143,7 +145,7 @@ mdlr('[html]css-paper-pirouette', m => {
     animation-delay: calc((var(--i) * var(--stagger)));
 
     > div {
-      height: var(--segment);
+      height: calc(100% / var(--segments));
     }
   }
 
@@ -165,7 +167,7 @@ mdlr('[html]css-paper-pirouette', m => {
   }
 
   & span {
-    position:fixed;
+    position:absolute;
     top: 0;
     left:0;
     width:100%;
@@ -174,6 +176,7 @@ mdlr('[html]css-paper-pirouette', m => {
     font-size: 5vh;
     font-weight: bold;
   }
+
   & .paper.-rogue {
     transform-origin: top center -5vmin;
     
@@ -191,50 +194,39 @@ mdlr('[html]css-paper-pirouette', m => {
 
   m.rules`
   @keyframes fly-in {
-    0%, 2% {
-      transform: translateZ(var(--offscreen)) translateY(80%) rotateX(30deg);
-    }
-    80%, 100% {
-      transform: translateZ(0px) translateY(0%) rotateX(0deg);
-    }
+    0%, 2% { transform: translate3d(0, 80%, var(--offscreen)) rotateX(30deg) }
+    80%, 100% { transform: translate3d(0) rotateX(0) }
   }
 
   @keyframes shadow-in {
-    0%,5% {
-      transform: scale(.8, 1) translateY(var(--offscreen));
-    }
-    100% {
-      transform: scale(.8,0);
-    }
+    0%,5% { transform: scale(.8, 1) translateY(var(--offscreen)) }
+    100% { transform: scale(.8,0) }
   }
 
   @keyframes curve-paper {
-    0%, 2% { transform: rotateX(var(--rotate,0deg)); }
-    90%, 100% { transform: rotateX(0deg); }
+    0%, 2% { transform: rotateX(var(--rotate)) }
+    90%, 100% { transform: rotateX(0) }
   }
 
   @keyframes curve-rogue-paper {
-    0%, 50% { transform: rotateX(var(--rotate)); }
-    100% { transform: rotateX(0deg); }
+    0%, 50% { transform: rotateX(var(--rotate)) }
+    100% { transform: rotateX(0) }
   }
 
   @keyframes rogue-paper {
-    0%, 2% {
-      transform: rotateX(1.5turn) 
-    }
-    80%, 100% {
-      transform: rotateX(0turn);
-    }
+    0%, 2% { transform: rotateX(2turn) }
+    80%, 100% { transform: rotateX(0) }
   }`;
 
   return class {
     papers = [0, 1, 2, 3, 4];
-    text = "mdlr.is.an.awesome.developer.experience...";
+    text = "whoot.mdlr.is.an.awesome.developer.experience...";
 
     connected(e) {
       let offset = this.papers.length;
-      e.addEventListener("animationiteration", e => {
+      e.addEventListener('animationiteration', e => {
         if (e.animationName !== 'fly-in') return;
+
         const elem = e.target.querySelector('span');
         elem.textContent = this.text[offset++ % this.text.length];
       });

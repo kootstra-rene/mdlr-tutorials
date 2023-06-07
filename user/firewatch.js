@@ -1,78 +1,89 @@
+// todo: explain why it is better to us element scroll event i.s.o. window scroll event. (local vs global scope)
 mdlr('[html]tutorial-firewatch', m => {
 
+  const FIRE_WATCH_GAME_IMAGE = 'https://www.firewatchgame.com/images/parallax/parallax';
+
   m.html`
-  <a href="https://www.firewatchgame.com">
-    {#each layer in layers}
-      <img alt="layer-#{layer}" decoding="async" style="transform: translate(0, {(-y * layer / (layers.length - 1)).toFixed(1)}px)" src="https://www.firewatchgame.com/images/parallax/parallax{layer}.png" />
-    {/each}
-  </a>
-  <div>
-    <span style="opacity:{opacity}">scroll down</span>
-    <div>You have scrolled {y.toFixed(1)} pixels</div>
-  </div>`;
+  {#each layer in [0, 1, 2, 3, 4, 5, 6, 7]}
+    <div style="top: {top(layer).toFixed(3)}px" >
+      <img alt="layer-#{layer}" src="${FIRE_WATCH_GAME_IMAGE}{layer}.png" />
+      {#if layer === 7}
+        <span style="opacity:{opacity.toFixed(1)}">scroll down</span>
+      {/if}
+    </div>
+  {/each}
+
+  <main{} on={scroll}>
+    <img alt="layer-8" src="${FIRE_WATCH_GAME_IMAGE}8.png" />
+    <div>You have scrolled {(main?.scrollTop || 0).toFixed(1)} pixels.</div>
+  </main>`;
 
   m.css`
   :root {
-    all: unset;
+    all: initial;
     display: block;
     background-color: rgb(32,0,1);
+    height: 100%;
   }
 
-  a {
+  main {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  > div {
     position: fixed;
-    width: 2400px;
-    height: 712px;
-    left: 50%;
-    transform: translate(-50%,0);
+    width: 100%;
+    overflow:hidden;
+    text-align: center;
   }
 
   img {
-    position: fixed;
-    width: 100%;
-    will-change: transform;
-  }
-
-  div {
     position: relative;
-    width: 100%;
-    height: 300vh;
-    color: rgb(220,113,43);
-    text-align: center;
-    padding: 4em 0.5em 0.5em 0.5em;
-    box-sizing: border-box;
-    pointer-events: none;
+    height: 712px;
+    width: 2400px;
+    left: 50%;
+    top: 0px;
+    transform: translate(-50%,0);
   }
 
-  span {
+  > div > span {
     display: block;
+    position: absolute;
+    top: 4em;
     font-size: 1em;
     text-transform: uppercase;
-    will-change: transform, opacity;
+    width:100%;
+    color: rgb(220,113,43);
   }
 
-  div > div {
-    position: absolute;
-    top: 711px;
-    left: 0;
+  main > img {
+    top: 0.25rem;
+  }
+  main > div {
+    position: relative;
+    text-align: center;
+    height: calc(100vh - 1rem);
     width: 100%;
-    height: calc(100% - 712px);
     background-color: rgb(32,0,1);
     color: white;
-    padding: 50vh 0 0 0;
   }`;
 
   return class {
-    layers = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    main;
     opacity = 1.0;
-    y = 0;
 
-    connected() {
-      document.body.style.overflow = "auto";
-      document.addEventListener('scroll', e => {
-        this.y = window.scrollY;
-        this.opacity = 1.0 - Math.max(0, this.y / 40);
-        m.render(this);
-      });
+    top(layer) {
+      const y = this.main?.scrollTop || 0;
+      return -y * (layer / 8);
+    }
+
+    scroll(e) {
+      this.opacity = Math.max(1.0 - Math.max(0, e.target.scrollTop / 60), 0);
+      m.render(this);
     }
   }
 
