@@ -119,9 +119,6 @@ mdlr('[html]tutorial-filesystem', m => {
     overflow: auto;
     height: 100vh;
   }
-  > div {
-    width: 50%;
-  }
   
   > div + div {
     position:absolute;

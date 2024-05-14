@@ -12,7 +12,7 @@ mdlr('[html]css-paper-pirouette', m => {
         <div class="segment">
           <div class="segment">
             <div class="segment">
-              <span>-{text[i]}-</span>
+              <span>{text[i]}</span>
               <div class="segment">
                 <div class="segment"/>
               </div>
@@ -220,7 +220,7 @@ mdlr('[html]css-paper-pirouette', m => {
 
   return class {
     papers = [0, 1, 2, 3, 4];
-    text = "whoot.mdlr.is.an.awesome.developer.experience...";
+    text = "mdlr.is.an.awesome.developer.experience...";
 
     connected(e) {
       let offset = this.papers.length;
