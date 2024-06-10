@@ -1,8 +1,8 @@
-mdlr('[html]tutorial-pointer-events', m => {
+mdlr('[web]tutorial:pointer-events', m => {
 
-  m.html`<div on={pointermove}>pointer-position: {x.toFixed(2)}, {y.toFixed(2)} {e}</div>`;
+  m.html`<div on{pointermove}>pointer-position: {x.toFixed(2)}, {y.toFixed(2)} {text}</div>`;
 
-  m.css`
+  m.style`
   div {
     width: 100vw;
     height: 100vh;
@@ -16,14 +16,12 @@ mdlr('[html]tutorial-pointer-events', m => {
   return class {
     x = 0;
     y = 0;
-    e = {};
+    text = {};
 
-    pointermove(e) {
-      ({ x: this.x, y: this.y } = e);
-      const { pressure, tangentialPressure } = e;
-      this.e = JSON.stringify({ pressure });
-
-      m.render(this);
+    pointermove(event) {
+      ({ x: this.x, y: this.y } = event);
+      const { pressure } = event;
+      this.text = JSON.stringify({ pressure });
     }
   }
 

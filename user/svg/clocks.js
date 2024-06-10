@@ -1,19 +1,20 @@
-mdlr('[html]tutorial-clocks', m => {
+mdlr('[web]tutorial:multiple-clocks', m => {
 
-  m.require('[html]tutorial-svg-clock');
+  m.require('[web]tutorial:svg-clock');
+
+  //<div><svg-clock offset={} logo={name}/></div>
+  //<div><svg-clock{={offset,logo:name}}/></div>
 
   m.html`
-  {#each location in locations}
-    <div>
-      <tutorial-svg-clock offset={location.offset} logo={location.name}/>
-    </div>
+  {#each {offset, name} in locations}
+    <div><svg-clock offset={} logo={name}/></div>
   {/each}
   `;
-  m.css`
-  :root {
-    height: 100vh;
-    display: grid;
-  }
+
+  m.style`
+  height: 100vh;
+  display: grid;
+
   div {
     position: relative;
   }

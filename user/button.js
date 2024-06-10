@@ -1,22 +1,21 @@
-mdlr('[html]tutorial-button', m => {
+mdlr('[web]tutorial-button', m => {
 
-  m.html`<button on={click}>clicked {count} times</button>`;
+  m.html`<button on{click}>clicked {count} times</button>`;
 
   return class {
     count = 0;
 
     click() {
       ++this.count;
-      m.render(this);
     }
   }
 })
 
-mdlr('[html]tutorial-button-styled', m => {
+mdlr('[web]tutorial-button-styled', m => {
 
-  m.html`<button on={click}>clicked {count} times</button>`;
+  m.html`<button on{click}>clicked {count} times</button>`;
 
-  m.css`
+  m.style`
   :where(*) {
     all: unset;
   }
@@ -36,7 +35,6 @@ mdlr('[html]tutorial-button-styled', m => {
 
     click() {
       ++this.count;
-      m.render(this);
     }
   }
 })

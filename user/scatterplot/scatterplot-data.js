@@ -1,4 +1,4 @@
-mdlr('tutorial-scatterplot:data', m => {
+mdlr('tutorial:scatterplot-data', m => {
 
     return {
       a: [

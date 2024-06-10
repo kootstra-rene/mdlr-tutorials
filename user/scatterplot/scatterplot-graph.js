@@ -1,9 +1,9 @@
-mdlr('[html]tutorial-scatterplot-graph', m => {
+mdlr('[web]tutorial:scatterplot-graph', m => {
 
   const { linear } = m.require('scale');
 
   m.html`
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">
+  <svg viewBox="0 0 {width} {height}">
     <g class="axis y-axis">
       {#each tick in yTicks}
         <g class="tick" transform="translate(0, {yScale(tick)})">
@@ -27,12 +27,10 @@ mdlr('[html]tutorial-scatterplot-graph', m => {
     {/each}
   </svg>`;
 
-  m.css`
-  :root {
-    display: inline-block;
-    height: 50%;
-    width: 50%;
-  }
+  m.style`
+  display: inline-block;
+  height: 50%;
+  width: 50%;
 
   .tick line {
     stroke: #999;

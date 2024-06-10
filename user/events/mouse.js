@@ -1,8 +1,8 @@
-mdlr('[html]tutorial-mouse-events', m => {
+mdlr('[web]tutorial:mouse-events', m => {
 
-  m.html`<div on={mousemove}>mouse-position: {x}, {y}</div>`;
+  m.html`<div on{mousemove}>mouse-position: {x}, {y}</div>`;
 
-  m.css`
+  m.style`
   div {
     width: 100vw;
     height: 100vh;
@@ -19,8 +19,6 @@ mdlr('[html]tutorial-mouse-events', m => {
 
     mousemove(e) {
       ({x: this.x, y: this.y} = e);
-
-      m.render(this);
     }
   }
 

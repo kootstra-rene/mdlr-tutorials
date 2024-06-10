@@ -1,8 +1,8 @@
-mdlr('[html]tutorial-notch', m => {
+mdlr('[web]tutorial-notch', m => {
 
   m.html`<canvas id="game" width="424" height="240" />`;
 
-  m.css`
+  m.style`
   canvas {
     transform: translate(20vw, 20vh);
     width: 60vw;

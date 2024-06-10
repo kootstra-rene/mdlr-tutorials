@@ -1,10 +1,10 @@
-mdlr('[html]css-paper-pirouette', m => {
+mdlr('[web]css-paper-pirouette', m => {
 
   // based on: https://codepen.io/team/keyframers/pen/YzKjoev
-
-  m.require('foreach')
   
   m.html`
+  {:self on{animationiteration}}
+
   <div id="app">
     <div class="papers">
     {#each i in papers}
@@ -192,7 +192,7 @@ mdlr('[html]css-paper-pirouette', m => {
     }
   }`;
 
-  m.rules`
+  m.global`
   @keyframes fly-in {
     0%, 2% { transform: translate3d(0, 80%, var(--offscreen)) rotateX(30deg) }
     80%, 100% { transform: translate3d(0) rotateX(0) }
@@ -221,15 +221,13 @@ mdlr('[html]css-paper-pirouette', m => {
   return class {
     papers = [0, 1, 2, 3, 4];
     text = "mdlr.is.an.awesome.developer.experience...";
+    #offset = this.papers.length;
 
-    connected(e) {
-      let offset = this.papers.length;
-      e.addEventListener('animationiteration', e => {
-        if (e.animationName !== 'fly-in') return;
+    animationiteration(e) {
+      if (e.animationName !== 'fly-in') return;
 
-        const elem = e.target.querySelector('span');
-        elem.textContent = this.text[offset++ % this.text.length];
-      });
+      const elem = e.target.querySelector('span');
+      elem.textContent = this.text[this.#offset++ % this.text.length];
     }
   }
 })

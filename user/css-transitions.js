@@ -1,4 +1,4 @@
-mdlr('[html]css-transitions', m => {
+mdlr('[web]css-transitions', m => {
 
   m.html`<div>CSS</div>`;
 
@@ -20,7 +20,7 @@ mdlr('[html]css-transitions', m => {
     margin-left: 10%;
   }`;
 
-  m.rules`
+  m.global`
   @keyframes animate {
       0% { transform: rotate(0deg); left: 0px; }
      25% { transform: rotate(45deg); left: 0px; }
